@@ -1,14 +1,45 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use anyhow::Result;
+use fastwebsockets::handshake;
+use fastwebsockets::WebSocket;
+use http_body_util::Empty;
+use hyper::{
+    body::Bytes,
+    header::{CONNECTION, UPGRADE},
+    upgrade::Upgraded,
+    Request,
+};
+use hyper_util::rt::tokio::TokioIo;
+use std::future::Future;
+use tokio::net::TcpStream;
+
+struct SpawnExecutor;
+
+impl<Fut> hyper::rt::Executor<Fut> for SpawnExecutor
+where
+    Fut: Future + Send + 'static,
+    Fut::Output: Send + 'static,
+{
+    fn execute(&self, fut: Fut) {
+        tokio::task::spawn(fut);
+    }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub async fn connect() -> Result<WebSocket<TokioIo<Upgraded>>> {
+    let stream = TcpStream::connect("localhost:6123").await?;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+    let req = Request::builder()
+        .method("GET")
+        .uri("http://localhost:6123/")
+        .header("Host", "localhost:6123")
+        .header(UPGRADE, "websocket")
+        .header(CONNECTION, "upgrade")
+        .header(
+            "Sec-WebSocket-Key",
+            fastwebsockets::handshake::generate_key(),
+        )
+        .header("Sec-WebSocket-Version", "13")
+        .body(Empty::<Bytes>::new())?;
+
+    let (ws, _) = handshake::client(&SpawnExecutor, req, stream).await?;
+    Ok(ws)
 }

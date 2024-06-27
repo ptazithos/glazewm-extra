@@ -4,3 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+fastwebsockets = { workspace = true }
+hyper = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+http-body-util = { workspace = true }
+hyper-util = { workspace = true }
