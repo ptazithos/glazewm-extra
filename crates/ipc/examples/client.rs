@@ -2,7 +2,7 @@ use anyhow::{Ok, Result};
 use fastwebsockets::FragmentCollector;
 use fastwebsockets::Frame;
 use fastwebsockets::Payload;
-use ipc::connect;
+use ipc::socket::connect;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
