@@ -8,18 +8,18 @@ pub struct Payload {
     success: bool,
     #[serde(rename(deserialize = "messageType"))]
     message_type: String,
-    data: Data,
+    pub data: Data,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Data {
     #[serde(rename(deserialize = "focusedContainer"))]
-    focused_container: Container,
+    pub focused_container: Container,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Container {
-    handle: i32,
+    pub handle: i32,
     id: String,
 }
 
