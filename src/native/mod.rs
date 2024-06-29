@@ -12,7 +12,6 @@ pub fn set_window_alpha(raw_handle: isize, alpha: u8) {
     unsafe {
         let ex_style = GetWindowLongPtrW(handle, GWL_EXSTYLE);
         if ex_style & isize::try_from(WS_EX_LAYERED.0).unwrap() == 0 {
-            println!("Setting WS_EX_LAYERED");
             SetWindowLongPtrW(
                 handle,
                 GWL_EXSTYLE,
