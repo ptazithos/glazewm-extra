@@ -1,9 +1,13 @@
 # GlazeWM Extra
 
 Additional features for the Glaze Window Manager (glazewm). 
-Currently, it provides support for translucent unfocused windows.
+Currently, it provides support for `translucent unfocused windows` and `hide title bar`.
 
-![Demo](assets/demo.gif)
+#### Translucent windows
+![transparency](assets/transparency.gif)
+
+#### Hide Title Bar
+![hide_titlebar](assets/hide_titlebar.png)
 
 ## Installation
 To install, use cargo:
@@ -16,7 +20,8 @@ cargo install glazewm-extra
 After installing the application, run it with an alpha argument:
 ```shell
 # Unfocused windows will have a translucent appearance with an alpha value of 128/255.
-glazewm-extra --alpha 128
+# All windows' title bar will be hidden except those who draw title bar by themself like Google Chrome
+glazewm-extra --enable-transparency --hide-titlebar --alpha 128
 ```
 
 ## License
