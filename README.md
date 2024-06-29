@@ -1,7 +1,5 @@
 # GlazeWM Extra
 
-## Description
-
 This repository contains additional features for the Glaze Window Manager (glazewm) based on `ipc` and `windows api`. 
 
 Currently, it provides support for translucent unfocused windows.
