@@ -10,10 +10,12 @@ Currently, it provides support for `translucent unfocused windows` and `hide tit
 ![hide_titlebar](assets/hide_titlebar.png)
 
 ## Installation
-To install, use cargo:
+#### Use Cargo
 ```shell
 cargo install glazewm-extra
 ```
+#### Direct Download
+The latest build can be found [here](https://github.com/ptazithos/glazewm-extra/releases/). Just download it and no more additional installation steps are needed.
 
 ## Usage
 
