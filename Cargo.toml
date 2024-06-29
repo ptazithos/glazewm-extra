@@ -2,6 +2,13 @@
 name = "glazewm-extra"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+readme = "README.md"
+keywords = ["wm", "glazewm"]
+categories = ["command-line-utilities"]
+homepage = "https://github.com/ptazithos/glazewm-extra"
+repository = "https://github.com/ptazithos/glazewm-extra"
+description = "This repository contains additional features for the Glaze Window Manager (glazewm) based on ipc and windows api."
 
 
 [workspace]
