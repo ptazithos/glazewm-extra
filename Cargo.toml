@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
-keywords = ["wm", "glazewm"]
+keywords = ["glazewm"]
 categories = ["command-line-utilities"]
+exclude = ["assets", "examples"]
 homepage = "https://github.com/ptazithos/glazewm-extra"
 repository = "https://github.com/ptazithos/glazewm-extra"
 description = "This repository contains additional features for the Glaze Window Manager (glazewm) based on ipc and windows api."
@@ -28,7 +29,7 @@ clap = { version = "4.5.8", features = ["derive"] }
 
 
 [dependencies]
-ipc = { path = "./crates/ipc" }
-native = { path = "./crates/native" }
+ipc = { path = "./crates/ipc", version = "0.1.0" }
+native = { path = "./crates/native", version = "0.1.0" }
 tokio = { workspace = true }
 clap = { workspace = true }

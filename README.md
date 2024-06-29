@@ -6,6 +6,8 @@ This repository contains additional features for the Glaze Window Manager (glaze
 
 Currently, it provides support for translucent unfocused windows.
 
+![Demo](assets/demo.gif)
+
 ## Installation
 To install, use cargo:
 ```shell
