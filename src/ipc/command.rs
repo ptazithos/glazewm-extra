@@ -1,7 +1,7 @@
 use anyhow::Ok;
 use serde::*;
 
-use crate::Stream;
+use super::Stream;
 
 pub async fn command(command: &str) -> anyhow::Result<String> {
     let mut stream = Stream::new().await?;

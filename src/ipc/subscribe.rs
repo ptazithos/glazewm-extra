@@ -1,4 +1,4 @@
-use crate::stream::Stream;
+use super::stream::Stream;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]

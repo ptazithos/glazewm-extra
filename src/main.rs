@@ -1,3 +1,6 @@
+mod ipc;
+mod native;
+
 use clap::{command, Parser};
 use ipc::{command::get_windows, subscribe::subscribe};
 use native::set_window_alpha;

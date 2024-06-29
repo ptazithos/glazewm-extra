@@ -9,7 +9,7 @@ use hyper::{
 };
 use hyper_util::rt::tokio::TokioIo;
 
-use crate::spawn_executor::SpawnExecutor;
+use super::spawn_executor::SpawnExecutor;
 
 use tokio::net::TcpStream;
 
