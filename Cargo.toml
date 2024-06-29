@@ -33,3 +33,7 @@ ipc = { path = "./crates/ipc", version = "0.1.0" }
 native = { path = "./crates/native", version = "0.1.0" }
 tokio = { workspace = true }
 clap = { workspace = true }
+
+[[bin]]
+name = "glazewm-extra"
+path = "src/main.rs"
