@@ -1,7 +1,6 @@
 # GlazeWM Extra
 
 Additional features for the Glaze Window Manager (glazewm). 
-Currently, it provides support for `translucent unfocused windows` and `hide title bar`.
 
 #### Translucent windows
 ![transparency](assets/transparency.gif)
