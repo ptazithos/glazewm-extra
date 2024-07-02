@@ -1,12 +1,10 @@
 {
   "build": {
-    "beforeDevCommand": "pnpm ui:dev",
-    "beforeBuildCommand": "pnpm ui:build",
     "devPath": "http://localhost:3000/",
-    "distDir": "../windows/dist"
+    "distDir": "../ui/dist"
   },
   "package": {
-    "productName": "demo",
+    "productName": "glazewm-extra",
     "version": "0.0.0"
   },
   "tauri": {
@@ -19,7 +17,7 @@
     },
     "windows": [
       {
-        "title": "demo",
+        "title": "daemon",
         "width": 800,
         "height": 600,
         "url": "daemon.html"
@@ -31,7 +29,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "net.pithos.dev",
       "icon": [
         "icons/icon.ico"
       ]

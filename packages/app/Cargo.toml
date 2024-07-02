@@ -1,5 +1,5 @@
 [package]
-name = "demo"
+name = "glazewm-extra"
 version = "0.0.0"
 description = "A Tauri App"
 authors = ["you"]
