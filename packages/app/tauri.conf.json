@@ -1,0 +1,40 @@
+{
+  "build": {
+    "beforeDevCommand": "pnpm ui:dev",
+    "beforeBuildCommand": "pnpm ui:build",
+    "devPath": "http://localhost:3000/",
+    "distDir": "../windows/dist"
+  },
+  "package": {
+    "productName": "demo",
+    "version": "0.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      }
+    },
+    "windows": [
+      {
+        "title": "demo",
+        "width": 800,
+        "height": 600,
+        "url": "daemon.html"
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.tauri.dev",
+      "icon": [
+        "icons/icon.ico"
+      ]
+    }
+  }
+}
