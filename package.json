@@ -1,11 +1,25 @@
 {
-  "name": "glazewm-extra",
+  "name": "ts-demo",
+  "private": true,
   "version": "1.0.0",
   "scripts": {
-    "ui:dev": "cd packages/ui && pnpm install && pnpm dev",
-    "ui:build": "cd packages/ui && pnpm build",
-    "app:dev": "cd packages/app && cargo run",
-    "dev": "pnpm run \"/^.*:dev/\""
+    "dev": "rsbuild dev",
+    "build": "rsbuild build",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@rsbuild/core": "^0.7.10",
+    "@rsbuild/plugin-react": "^0.7.10",
+    "@tauri-apps/cli": "^1.6.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.2"
   },
   "packageManager": "pnpm@9.3.0"
 }
