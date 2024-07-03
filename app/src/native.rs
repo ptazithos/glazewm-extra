@@ -7,6 +7,7 @@ use windows::Win32::{
     },
 };
 
+#[tauri::command]
 pub fn set_window_alpha(raw_handle: isize, alpha: u8) {
     let handle = HWND(raw_handle);
 
@@ -23,6 +24,7 @@ pub fn set_window_alpha(raw_handle: isize, alpha: u8) {
     }
 }
 
+#[tauri::command]
 pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
     let handle = HWND(raw_handle);
 

@@ -12,6 +12,10 @@ fn main() {
                 .targets([LogTarget::Stdout])
                 .build(),
         )
+        .invoke_handler(tauri::generate_handler![
+            native::set_window_alpha,
+            native::set_window_titlebar
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

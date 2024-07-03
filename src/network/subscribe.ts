@@ -4,7 +4,7 @@ const GLAZEWM_IPC_ADDR = "ws://localhost:6123";
 
 type Optional<T> = { [P in keyof T]?: Optional<T[P]> };
 
-type Payload = {
+export type FocusChangedPayload = {
 	data: {
 		focusedContainer: {
 			handle: number;
@@ -12,9 +12,11 @@ type Payload = {
 	};
 };
 
-export const subscribe = (
-	event: string,
-	onMessage: (payload: Optional<Payload>) => void,
+export type Event = "focus_changed";
+
+export const subscribe = <T>(
+	event: Event,
+	onMessage: (payload: Optional<T>) => void,
 ) => {
 	const ws = new WebSocket(GLAZEWM_IPC_ADDR);
 
@@ -27,4 +29,6 @@ export const subscribe = (
 	ws.onopen = () => {
 		ws.send(`subscribe -e ${event}`);
 	};
+
+	return ws;
 };

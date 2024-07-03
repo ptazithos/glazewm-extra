@@ -1,10 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import {invoke} from "@tauri-apps/api/tauri"
 
-import { useFocusedChange } from "./hooks/useFocusedChange";
+import type { FocusChangedPayload } from '../network/subscribe';
+import { subscribe } from '../network/subscribe';
+
+
+
 
 const DaemonApp = () => {
-    useFocusedChange();
+    useLayoutEffect(()=>{
+      const handle = subscribe<FocusChangedPayload>('focus_changed', (payload) => {
+        const hwnd = payload?.data?.focusedContainer?.handle;
+        invoke("set_window_alpha", {rawHandle:hwnd,alpha: 220})
+      })
+
+      return ()=>{
+        handle.close();
+      }
+    },[])
     
     return (
       <></>
