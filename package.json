@@ -2,8 +2,9 @@
   "name": "glazewm-extra",
   "version": "1.0.0",
   "scripts": {
-    "ui:dev": "cd packages/ui && pnpm dev",
+    "ui:dev": "cd packages/ui && pnpm install && pnpm dev",
     "ui:build": "cd packages/ui && pnpm build",
+    "app:dev": "cd packages/app && cargo run",
     "dev": "pnpm run \"/^.*:dev/\""
   },
   "packageManager": "pnpm@9.3.0"
