@@ -6,7 +6,7 @@ import { subscribe } from "../../network/subscribe";
 export const useFocusedChange = () => {
 	useEffect(() => {
 		subscribe("focus_changed", (payload) => {
-			info(JSON.stringify(payload));
+			const hwnd = payload?.data?.focusedContainer?.handle;
 		});
 	}, []);
 };
