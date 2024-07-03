@@ -13,7 +13,6 @@ const DaemonApp = () => {
 			const focused = payload?.data?.focusedContainer?.handle;
 
 			const windows = await getWindows();
-			info(JSON.stringify(windows));
 			for (const window of windows) {
 				const hwnd = window?.handle;
 				if (hwnd === focused) {
