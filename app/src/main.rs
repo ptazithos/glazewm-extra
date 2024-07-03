@@ -3,7 +3,7 @@
 
 use tauri_plugin_log::LogTarget;
 
-mod native;
+mod windows;
 
 fn main() {
     tauri::Builder::default()
@@ -13,8 +13,8 @@ fn main() {
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
-            native::set_window_alpha,
-            native::set_window_titlebar
+            windows::set_window_alpha,
+            windows::set_window_titlebar
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

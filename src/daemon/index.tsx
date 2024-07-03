@@ -2,10 +2,8 @@ import React, { useEffect, useLayoutEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { invoke } from "@tauri-apps/api/tauri";
 
-import type { FocusChangedPayload } from "../ipc/subscribe";
 import { subscribeFocusChanged } from "../ipc/subscribe";
 import { getWindows } from "../ipc/command";
-import { info } from "tauri-plugin-log-api";
 
 const DaemonApp = () => {
 	useLayoutEffect(() => {
