@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { trace, info, error, attachConsole } from "tauri-plugin-log-api";
 
+import { useFocusedChange } from "./hooks/useFocusedChange";
 
 const DaemonApp = () => {
-
-  return (
-    <></>
-  );
-};
+    useFocusedChange();
+    
+    return (
+      <></>
+    );
+  };
 
 
 const rootEl = document.getElementById('root');
