@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import { trace, info, error, attachConsole } from "tauri-plugin-log-api";
+
+
+const DaemonApp = () => {
+
+  return (
+    <></>
+  );
+};
+
 
 const rootEl = document.getElementById('root');
 if (rootEl) {
   const root = ReactDOM.createRoot(rootEl);
   root.render(
     <React.StrictMode>
-      <App />
+      <DaemonApp />
     </React.StrictMode>,
   );
 }

@@ -18,9 +18,10 @@
     "windows": [
       {
         "title": "daemon",
-        "width": 800,
-        "height": 600,
-        "url": "daemon.html"
+        "width": 0,
+        "height": 0,
+        "url": "daemon.html",
+        "visible": false
       }
     ],
     "security": {
