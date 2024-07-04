@@ -1,13 +1,25 @@
+use serde::{Deserialize, Serialize};
 use std::fs;
 use tauri::{App, Manager};
 
-struct AppStore {
+#[derive(Debug, Serialize, Deserialize, Default)]
+struct AppConfig {
     pub translucent_window: TranslucentWindowConfig,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 struct TranslucentWindowConfig {
     pub enable: bool,
     pub alpha: u8,
+}
+
+impl Default for TranslucentWindowConfig {
+    fn default() -> Self {
+        Self {
+            enable: true,
+            alpha: 220,
+        }
+    }
 }
 
 pub fn setup_store(app: &mut App) {
@@ -15,18 +27,18 @@ pub fn setup_store(app: &mut App) {
     config_path.push(".config");
     config_path.push("glazewm-extra.toml");
 
-    match fs::metadata(config_path.as_path()) {
+    match fs::metadata(&config_path) {
         Ok(_) => {
-            println!("Config file exists")
+            let config_str = fs::read_to_string(&config_path).unwrap();
+            if let Ok(app_config) = toml::from_str::<AppConfig>(&config_str) {
+                app.manage(app_config);
+            } else {
+                app.manage(AppConfig::default());
+            }
         }
         Err(_) => {
-            println!("Config file doesn't exist")
+            let config_str = toml::to_string(&AppConfig::default()).unwrap();
+            let _ = fs::write(&config_path, config_str);
         }
     }
-    app.manage(AppStore {
-        translucent_window: TranslucentWindowConfig {
-            enable: false,
-            alpha: 240,
-        },
-    });
 }
