@@ -3,12 +3,12 @@ use std::fs;
 use tauri::{App, Manager};
 
 #[derive(Debug, Serialize, Deserialize, Default)]
-struct AppConfig {
+pub struct AppConfig {
     pub translucent_window: TranslucentWindowConfig,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct TranslucentWindowConfig {
+pub struct TranslucentWindowConfig {
     pub enable: bool,
     pub alpha: u8,
 }
@@ -41,4 +41,9 @@ pub fn setup_store(app: &mut App) {
             let _ = fs::write(&config_path, config_str);
         }
     }
+}
+
+#[tauri::command]
+pub fn get_app_config(state: tauri::State<AppConfig>) -> &AppConfig {
+    state.inner()
 }

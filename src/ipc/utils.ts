@@ -6,4 +6,11 @@ export type Optional<T> = {
 			: T[P];
 };
 
+export type AppConfig = Optional<{
+	translucent_window: {
+		enable: boolean;
+		alpha: number;
+	};
+}>;
+
 export const GLAZEWM_IPC_ADDR = "ws://localhost:6123";
