@@ -11,6 +11,9 @@ export type AppConfig = Optional<{
 		enable: boolean;
 		alpha: number;
 	};
+	title_bar: {
+		enable: boolean;
+	};
 }>;
 
 export const GLAZEWM_IPC_ADDR = "ws://localhost:6123";

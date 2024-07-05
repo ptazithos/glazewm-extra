@@ -42,15 +42,23 @@ const DaemonApp = () => {
 	}, []);
 
 	useLayoutEffect(() => {
-		getWindows().then((windows) => {
+		const initTitlebarMange = async () => {
+			const appConfig = await invoke<AppConfig>("get_app_config");
+			if (!appConfig.title_bar?.enable) return;
+			const windows = await getWindows();
 			for (const window of windows) {
 				const hwnd = window?.handle;
 				hwnd &&
 					invoke("set_window_titlebar", { rawHandle: hwnd, titlebar: false });
 			}
-		});
+		};
 
-		const handle = subscribeWindowManaged((payload) => {
+		initTitlebarMange();
+
+		const handle = subscribeWindowManaged(async (payload) => {
+			const appConfig = await invoke<AppConfig>("get_app_config");
+			if (!appConfig.title_bar?.enable) return;
+
 			const hwnd = payload?.data?.managedWindow?.handle;
 			hwnd &&
 				invoke("set_window_titlebar", { rawHandle: hwnd, titlebar: false });
