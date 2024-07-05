@@ -3,7 +3,10 @@ import ReactDOM from "react-dom/client";
 import { invoke } from "@tauri-apps/api/tauri";
 import { info } from "tauri-plugin-log-api";
 
-import { subscribeFocusChanged } from "../ipc/subscribe";
+import {
+	subscribeFocusChanged,
+	subscribeWindowManaged,
+} from "../ipc/subscribe";
 import { getWindows } from "../ipc/command";
 import type { AppConfig } from "../ipc/utils";
 
@@ -24,12 +27,33 @@ const DaemonApp = () => {
 				if (hwnd === focused) {
 					invoke("set_window_alpha", { rawHandle: hwnd, alpha: 255 });
 				} else {
-					invoke("set_window_alpha", {
-						rawHandle: hwnd,
-						alpha: appConfig.translucent_window?.alpha ?? 240,
-					});
+					hwnd &&
+						invoke("set_window_alpha", {
+							rawHandle: hwnd,
+							alpha: appConfig.translucent_window?.alpha ?? 240,
+						});
 				}
 			}
+		});
+
+		return () => {
+			handle.close();
+		};
+	}, []);
+
+	useLayoutEffect(() => {
+		getWindows().then((windows) => {
+			for (const window of windows) {
+				const hwnd = window?.handle;
+				hwnd &&
+					invoke("set_window_titlebar", { rawHandle: hwnd, titlebar: false });
+			}
+		});
+
+		const handle = subscribeWindowManaged((payload) => {
+			const hwnd = payload?.data?.managedWindow?.handle;
+			hwnd &&
+				invoke("set_window_titlebar", { rawHandle: hwnd, titlebar: false });
 		});
 
 		return () => {

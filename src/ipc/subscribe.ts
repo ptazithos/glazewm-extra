@@ -1,7 +1,7 @@
 import type { Optional } from "./utils";
 import { GLAZEWM_IPC_ADDR } from "./utils";
 
-export type Event = "focus_changed";
+export type Event = "focus_changed" | "window_managed";
 
 export const subscribe = <T>(
 	event: Event,
@@ -34,4 +34,18 @@ export const subscribeFocusChanged = (
 	onMessage: (payload: Optional<FocusChangedPayload>) => void,
 ) => {
 	return subscribe<FocusChangedPayload>("focus_changed", onMessage);
+};
+
+export type WindowManagedPayload = {
+	data: {
+		managedWindow: {
+			handle: number;
+		};
+	};
+};
+
+export const subscribeWindowManaged = (
+	onMessage: (payload: Optional<WindowManagedPayload>) => void,
+) => {
+	return subscribe("window_managed", onMessage);
 };
