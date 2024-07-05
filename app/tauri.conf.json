@@ -26,6 +26,10 @@
         "visible": false
       }
     ],
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
+    },
     "security": {
       "csp": null
     },
