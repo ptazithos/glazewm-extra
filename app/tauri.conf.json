@@ -1,0 +1,48 @@
+{
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "devPath": "http://localhost:3000/",
+    "distDir": "../ui/dist"
+  },
+  "package": {
+    "productName": "glazewm-extra",
+    "version": "0.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      },
+      "process":{
+        "exit": true
+      }
+    },
+    "windows": [
+      {
+        "title": "daemon",
+        "width": 0,
+        "height": 0,
+        "url": "daemon.html",
+        "visible": false
+      }
+    ],
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
+    },
+    "security": {
+      "csp": null
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "net.pithos.dev",
+      "icon": [
+        "icons/icon.ico"
+      ]
+    }
+  }
+}

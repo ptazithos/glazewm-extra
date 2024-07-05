@@ -1,3 +1,5 @@
+use std::ffi::c_void;
+
 use windows::Win32::{
     Foundation::{COLORREF, HWND, RECT},
     UI::WindowsAndMessaging::{
@@ -7,8 +9,9 @@ use windows::Win32::{
     },
 };
 
+#[tauri::command]
 pub fn set_window_alpha(raw_handle: isize, alpha: u8) {
-    let handle = HWND(raw_handle);
+    let handle = HWND(raw_handle as *mut c_void);
 
     unsafe {
         let ex_style = GetWindowLongPtrW(handle, GWL_EXSTYLE);
@@ -23,8 +26,9 @@ pub fn set_window_alpha(raw_handle: isize, alpha: u8) {
     }
 }
 
+#[tauri::command]
 pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
-    let handle = HWND(raw_handle);
+    let handle = HWND(raw_handle as *mut c_void);
 
     unsafe {
         let ex_style = GetWindowLongPtrW(handle, GWL_STYLE);
