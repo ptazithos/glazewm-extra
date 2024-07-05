@@ -3,11 +3,11 @@
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
     "devPath": "http://localhost:3000/",
-    "distDir": "../ui/dist"
+    "distDir": "../dist"
   },
   "package": {
     "productName": "glazewm-extra",
-    "version": "0.0.0"
+    "version": "0.1.3"
   },
   "tauri": {
     "allowlist": {

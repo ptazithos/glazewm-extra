@@ -9,20 +9,23 @@ Additional features for the Glaze Window Manager (glazewm).
 ![hide_titlebar](assets/hide_titlebar.png)
 
 ## Installation
-#### Use Cargo
-```shell
-cargo install glazewm-extra
-```
+
 #### Direct Download
-The latest build can be found [here](https://github.com/ptazithos/glazewm-extra/releases/). Just download it and no more additional installation steps are needed.
+The latest build can be found [here](https://github.com/ptazithos/glazewm-extra/releases/).  
+Make sure [Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2) and [VCRuntime140](https://www.microsoft.com/en-us/download/details.aspx?id=48145) are installed before running.
 
-## Usage
+## Configuration
+The config file located at "${UserFolder}/.config/glazewm-extra". The default config is as follows:
 
-After installing the application, run it with an alpha argument:
-```shell
-# Unfocused windows will have a translucent appearance with an alpha value of 128/255.
-# All windows' title bar will be hidden except those who draw title bar by themself like Google Chrome
-glazewm-extra --enable-transparency --hide-titlebar --alpha 128
+```toml
+[translucent_window]
+enable = true
+alpha = 220
+
+
+[title_bar]
+# True for hiding all titlebars
+enable = true
 ```
 
 ## License
