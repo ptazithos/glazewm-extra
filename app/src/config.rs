@@ -53,10 +53,8 @@ pub fn setup_store(app: &mut App) {
             let config_str = fs::read_to_string(&config_path).unwrap();
 
             if let Ok(app_config) = toml::from_str::<AppConfig>(&config_str) {
-                println!("success {:?}", app_config);
                 app.manage(app_config);
             } else {
-                println!("fail");
                 app.manage(AppConfig::default());
             }
         }
