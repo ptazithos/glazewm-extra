@@ -39,6 +39,7 @@ pub fn setup_store(app: &mut App) {
         Err(_) => {
             let config_str = toml::to_string(&AppConfig::default()).unwrap();
             let _ = fs::write(&config_path, config_str);
+            app.manage(AppConfig::default());
         }
     }
 }
