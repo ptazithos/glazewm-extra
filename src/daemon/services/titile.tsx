@@ -17,14 +17,16 @@ const TitleService = (props: { config: AppConfig }) => {
 			}
 		};
 
-		setWindowsTitleBar(tileBarConfig?.enable ?? true);
+		setWindowsTitleBar(!(tileBarConfig?.enable ?? true));
 
 		if (!tileBarConfig?.enable) return;
 
 		const handle = subscribeWindowManaged(async (payload) => {
-			const hwnd = payload?.data?.managedWindow?.handle;
-			hwnd &&
-				invoke("set_window_titlebar", { rawHandle: hwnd, titlebar: false });
+			setTimeout(() => {
+				const hwnd = payload?.data?.managedWindow?.handle;
+				hwnd &&
+					invoke("set_window_titlebar", { rawHandle: hwnd, titlebar: false });
+			}, 200);
 		});
 
 		return () => {
