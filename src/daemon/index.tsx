@@ -32,8 +32,6 @@ const DaemonApp = () => {
 
 				await exit(1);
 			});
-
-			console.log(appConfig);
 		};
 
 		init();
