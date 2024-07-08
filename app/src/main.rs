@@ -17,6 +17,9 @@ fn main() {
                 .targets([LogTarget::Stdout])
                 .build(),
         )
+        .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
+            println!("Instance started with: {:?}", argv);
+        }))
         .setup(|app| {
             config::setup_store(app);
             Ok(())
