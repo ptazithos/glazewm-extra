@@ -15,7 +15,7 @@ The latest build can be found [here](https://github.com/ptazithos/glazewm-extra/
 Make sure [Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2) and [VCRuntime140](https://www.microsoft.com/en-us/download/details.aspx?id=48145) are installed before running.
 
 ## Configuration
-The config file located at "${UserFolder}/.config/glazewm-extra". The default config is as follows:
+The config file located at "${UserFolder}/.config/glazewm-extra.toml". The default config is as follows:
 
 ```toml
 [translucent_window]
