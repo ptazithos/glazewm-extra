@@ -1,11 +1,12 @@
-import { defineConfig } from '@rsbuild/core';
-import { pluginReact } from '@rsbuild/plugin-react';
+import { defineConfig } from "@rsbuild/core";
+import { pluginReact } from "@rsbuild/plugin-react";
 
 export default defineConfig({
-  plugins: [pluginReact()],
-  source: {
-    entry: {
-      daemon: "./src/daemon/index.tsx"
-    }
-  }
+	plugins: [pluginReact()],
+	source: {
+		entry: {
+			daemon: "./src/daemon/index.tsx",
+			overview: "./src/overview/index.tsx",
+		},
+	},
 });
