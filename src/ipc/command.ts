@@ -37,12 +37,22 @@ export const getWindows = async () =>
 
 export type WindowSpace = {
 	handle: number;
+	type: "window";
 	sizePercentage: number;
 };
+
+export type SplitSpace = {
+	sizePercentage: number;
+	type: "split";
+	children: Array<SplitSpace | WindowSpace>;
+	tilingDirection: "horizontal" | "vertical";
+};
+
 export type Workspace = {
 	tilingDirection: "horizontal" | "vertical";
 	sizePercentage: number;
-	children: Array<Workspace | WindowSpace>;
+	type: "workspace";
+	children: Array<SplitSpace | WindowSpace>;
 };
 
 export type WorkspacesPayload = Payload<Array<Workspace>>;

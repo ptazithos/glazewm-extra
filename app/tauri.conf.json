@@ -39,11 +39,12 @@
 				"width": 0,
 				"height": 0,
 				"url": "overview.html",
-				"visible": false,
+				"visible": true,
 				"decorations": false,
 				"alwaysOnTop": true,
 				"resizable": false,
-				"center": true
+				"center": true,
+				"transparent": true
 			}
 		],
 		"systemTray": {

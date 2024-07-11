@@ -1,0 +1,6 @@
+@unocss preflights;
+@unocss default;
+
+body,html {
+    margin: 0;
+    } 

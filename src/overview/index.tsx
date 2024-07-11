@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { register } from "@tauri-apps/api/globalShortcut";
+import { register, unregister } from "@tauri-apps/api/globalShortcut";
 import { LogicalSize, WebviewWindow } from "@tauri-apps/api/window";
 import { info } from "tauri-plugin-log-api";
 
 import { getWorkspace, type Workspace } from "../ipc/command";
 import type { Optional } from "../ipc/utils";
 import WorkspacePanel from "./components/workspace-panel";
+
+import "./index.css";
 
 const OverviewApp = () => {
 	const refShow = useRef(false);
@@ -15,28 +17,31 @@ const OverviewApp = () => {
 	const [workspaces, setWorkspaces] = useState<Optional<Array<Workspace>>>([]);
 
 	useEffect(() => {
-		register("Alt+Shift+O", async () => {
-			info("Alt+Shift+O was pressed");
+		(async () => {
 			const window = refWindow.current;
 			const workspaces = await getWorkspace();
-			setWorkspaces(await getWorkspace());
+			info(JSON.stringify(workspaces));
 
-			if (refShow.current) {
-				window?.hide();
-			} else {
-				window?.setSize(new LogicalSize(workspaces.length * 320, 180));
-				window?.show();
-			}
-			refShow.current = !refShow.current;
-		});
+			setTimeout(() => {
+				window?.setSize(new LogicalSize(workspaces.length * 280, 180));
+				window?.center();
+			});
+
+			setWorkspaces(workspaces);
+		})();
 	}, []);
 
 	return (
-		<>
-			{workspaces.map((workspace) => (
-				<WorkspacePanel key={JSON.stringify(workspace)} />
-			))}
-		</>
+		<div className="h-100vh flex gap-5">
+			{workspaces.map(
+				(workspace, index) =>
+					workspace && (
+						<div className="flex-1  " key={JSON.stringify(workspace)}>
+							<WorkspacePanel workspace={workspace} />
+						</div>
+					),
+			)}
+		</div>
 	);
 };
 
