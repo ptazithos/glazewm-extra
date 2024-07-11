@@ -8,9 +8,10 @@ use windows::Win32::{
         DIB_RGB_COLORS, RGBQUAD, SRCCOPY,
     },
     UI::WindowsAndMessaging::{
-        GetClientRect, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW, GetWindowTextW,
-        SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, GWL_STYLE,
-        HWND_DESKTOP, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION, WS_EX_LAYERED,
+        GetClassNameW, GetClientRect, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW,
+        GetWindowTextW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
+        GWL_STYLE, HWND_DESKTOP, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION,
+        WS_EX_LAYERED,
     },
 };
 
@@ -73,6 +74,22 @@ pub fn get_window_name(raw_handle: isize) -> Option<String> {
 
         if result > 0 {
             Some(String::from_utf16_lossy(&buffer[..result as usize]))
+        } else {
+            None
+        }
+    }
+}
+
+#[tauri::command]
+pub fn get_window_class(raw_handle: isize) -> Option<String> {
+    let handle = HWND(raw_handle as *mut c_void);
+    unsafe {
+        let mut buffer: Vec<u16> = vec![0; 256]; // Arbitrary buffer size
+
+        let length = GetClassNameW(handle, &mut buffer);
+
+        if length > 0 {
+            Some(String::from_utf16_lossy(&buffer[..length as usize]))
         } else {
             None
         }

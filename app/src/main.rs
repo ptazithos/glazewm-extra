@@ -28,6 +28,7 @@ fn main() {
             windows::set_window_alpha,
             windows::set_window_titlebar,
             windows::get_window_name,
+            windows::get_window_class,
             config::get_app_config
         ])
         .run(tauri::generate_context!())

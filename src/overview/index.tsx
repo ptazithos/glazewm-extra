@@ -22,10 +22,8 @@ const OverviewApp = () => {
 			const workspaces = await getWorkspace();
 			info(JSON.stringify(workspaces));
 
-			setTimeout(() => {
-				window?.setSize(new LogicalSize(workspaces.length * 280, 180));
-				window?.center();
-			});
+			window?.setSize(new LogicalSize(workspaces.length * 280, 180));
+			window?.center();
 
 			setWorkspaces(workspaces);
 		})();
