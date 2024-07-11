@@ -57,5 +57,5 @@ export type Workspace = {
 
 export type WorkspacesPayload = Payload<Array<Workspace>>;
 
-export const getWorkspace = async () =>
+export const getWorkspaces = async () =>
 	(await command<WorkspacesPayload>("workspaces")).data ?? [];

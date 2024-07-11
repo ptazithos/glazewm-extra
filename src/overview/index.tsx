@@ -1,32 +1,44 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { register, unregister } from "@tauri-apps/api/globalShortcut";
 import { LogicalSize, WebviewWindow } from "@tauri-apps/api/window";
 import { info } from "tauri-plugin-log-api";
 
-import { getWorkspace, type Workspace } from "../ipc/command";
+import { getWorkspaces, type Workspace } from "../ipc/command";
 import type { Optional } from "../ipc/utils";
 import WorkspacePanel from "./components/workspace-panel";
 
 import "./index.css";
+import {
+	subscribeWindowManaged,
+	subscribeWindowUnmanaged,
+} from "../ipc/subscribe";
 
 const OverviewApp = () => {
-	const refShow = useRef(false);
 	const refWindow = useRef(WebviewWindow.getByLabel("overview"));
 
 	const [workspaces, setWorkspaces] = useState<Optional<Array<Workspace>>>([]);
 
 	useEffect(() => {
-		(async () => {
+		const updateWorkspaces = async () => {
 			const window = refWindow.current;
-			const workspaces = await getWorkspace();
-			info(JSON.stringify(workspaces));
+			const workspaces = await getWorkspaces();
+			info(JSON.stringify(workspaces.length));
 
 			window?.setSize(new LogicalSize(workspaces.length * 280, 180));
 			window?.center();
 
 			setWorkspaces(workspaces);
-		})();
+		};
+
+		updateWorkspaces();
+
+		subscribeWindowManaged((payload) => {
+			updateWorkspaces();
+		});
+
+		subscribeWindowUnmanaged((payload) => {
+			updateWorkspaces();
+		});
 	}, []);
 
 	return (
