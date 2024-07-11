@@ -8,9 +8,9 @@ use windows::Win32::{
         DIB_RGB_COLORS, RGBQUAD, SRCCOPY,
     },
     UI::WindowsAndMessaging::{
-        GetClientRect, GetWindowLongPtrW, GetWindowRect, SetLayeredWindowAttributes,
-        SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, GWL_STYLE, HWND_DESKTOP, HWND_TOP, LWA_ALPHA,
-        SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION, WS_EX_LAYERED,
+        GetClientRect, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW, GetWindowTextW,
+        SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, GWL_STYLE,
+        HWND_DESKTOP, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION, WS_EX_LAYERED,
     },
 };
 
@@ -55,6 +55,27 @@ pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
             rect.bottom - rect.top,
             SWP_FRAMECHANGED | SWP_NOMOVE,
         );
+    }
+}
+
+#[tauri::command]
+pub fn get_window_name(raw_handle: isize) -> Option<String> {
+    let handle = HWND(raw_handle as *mut c_void);
+    unsafe {
+        let length = GetWindowTextLengthW(handle);
+        if length == 0 {
+            return None;
+        }
+
+        let mut buffer: Vec<u16> = vec![0; (length + 1) as usize];
+
+        let result = GetWindowTextW(handle, &mut buffer);
+
+        if result > 0 {
+            Some(String::from_utf16_lossy(&buffer[..result as usize]))
+        } else {
+            None
+        }
     }
 }
 
