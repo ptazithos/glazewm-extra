@@ -1,4 +1,3 @@
-use image::{ImageBuffer, Rgba};
 use std::ffi::c_void;
 
 use windows::Win32::{
@@ -60,7 +59,7 @@ pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
 }
 
 #[tauri::command]
-pub fn capture_window(raw_handle: isize, path: String) {
+pub fn capture_window(raw_handle: isize) {
     let handle = HWND(raw_handle as *mut c_void);
 
     unsafe {
@@ -122,9 +121,9 @@ pub fn capture_window(raw_handle: isize, path: String) {
             DIB_RGB_COLORS,
         );
 
-        let img =
-            ImageBuffer::<Rgba<u8>, _>::from_raw(width as u32, height as u32, buffer).unwrap();
-        img.save(path).unwrap();
+        // let img =
+        //     ImageBuffer::<Rgba<u8>, _>::from_raw(width as u32, height as u32, buffer).unwrap();
+        // img.save(path).unwrap();
 
         let _ = DeleteObject(virtual_screen);
         let _ = DeleteDC(hdc_mem);
