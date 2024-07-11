@@ -35,17 +35,17 @@ type WindowsPayload = Payload<Array<Window>>;
 export const getWindows = async () =>
 	(await command<WindowsPayload>("windows")).data ?? [];
 
-type WindowSpace = {
+export type WindowSpace = {
 	handle: number;
 	sizePercentage: number;
 };
-type Workspace = {
+export type Workspace = {
 	tilingDirection: "horizontal" | "vertical";
 	sizePercentage: number;
 	children: Array<Workspace | WindowSpace>;
 };
 
-type WorkspacesPayload = Payload<Array<Workspace>>;
+export type WorkspacesPayload = Payload<Array<Workspace>>;
 
 export const getWorkspace = async () =>
 	(await command<WorkspacesPayload>("workspaces")).data ?? [];
