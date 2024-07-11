@@ -34,7 +34,7 @@ const OverviewApp = () => {
 			{workspaces.map(
 				(workspace, index) =>
 					workspace && (
-						<div className="flex-1  " key={JSON.stringify(workspace)}>
+						<div className="flex-1" key={JSON.stringify(workspace)}>
 							<WorkspacePanel workspace={workspace} />
 						</div>
 					),
