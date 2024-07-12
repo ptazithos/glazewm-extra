@@ -8,6 +8,10 @@ Additional features for the Glaze Window Manager (glazewm).
 #### Hide Title Bar
 ![hide_titlebar](assets/hide_titlebar.png)
 
+#### Workspaces Preview
+After glazewm-extra starts, run `glazewm-extra.exe workspaces` to trigger the worksapces preview.
+![workspace_preview](assets/workspace_preview.png)
+
 ## Installation
 
 #### Direct Download
