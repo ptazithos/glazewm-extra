@@ -10,13 +10,29 @@ Additional features for the Glaze Window Manager (glazewm).
 
 #### Workspaces Preview
 After glazewm-extra starts, run `glazewm-extra.exe workspaces` to trigger the worksapces preview.
+
+Triggered by `GlazeWM`
+
+```yaml
+keybindings:
+  - command: "exec glazewm-extra workspaces"
+    binding: "Alt+X"
+```
+
 ![workspace_preview](assets/workspace_preview.png)
 
 ## Installation
 
+Make sure [Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2) and [VCRuntime140](https://www.microsoft.com/en-us/download/details.aspx?id=48145) are installed before running.
+
 #### Direct Download
 The latest build can be found [here](https://github.com/ptazithos/glazewm-extra/releases/).  
-Make sure [Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2) and [VCRuntime140](https://www.microsoft.com/en-us/download/details.aspx?id=48145) are installed before running.
+
+#### Scoop
+
+```cmd
+scoop install https://github.com/ptazithos/glazewm-extra/blob/main/assets/glazewm-extra.json
+```
 
 ## Configuration
 The config file located at "${UserFolder}/.config/glazewm-extra.toml". The default config is as follows:
