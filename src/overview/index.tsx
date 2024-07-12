@@ -14,10 +14,11 @@ import {
 	subscribeWindowManaged,
 	subscribeWindowUnmanaged,
 } from "../ipc/subscribe";
+import { listen } from "@tauri-apps/api/event";
 
 const OverviewApp = () => {
 	const refWindow = useRef(WebviewWindow.getByLabel("overview"));
-
+	const show = useRef(false);
 	const [workspaces, setWorkspaces] = useState<Optional<Array<Workspace>>>([]);
 
 	useEffect(() => {
@@ -25,9 +26,7 @@ const OverviewApp = () => {
 			const window = refWindow.current;
 			const workspaces = await getWorkspaces();
 
-			await window?.show();
 			await window?.setSize(new LogicalSize(workspaces.length * 280, 180));
-
 			await window?.center();
 
 			setWorkspaces(workspaces);
@@ -38,12 +37,24 @@ const OverviewApp = () => {
 		subscribeAll(() => {
 			updateWorkspaces();
 		});
+
+		listen("trigger-overview", () => {
+			if (show.current) {
+				refWindow.current?.hide();
+			} else {
+				refWindow.current?.show();
+			}
+
+			show.current = !show.current;
+		});
 	}, []);
+
+	console.log(workspaces);
 
 	return (
 		<div className="h-100vh flex gap-5">
 			{workspaces.map(
-				(workspace, index) =>
+				(workspace) =>
 					workspace && (
 						<div className="flex-1" key={JSON.stringify(workspace)}>
 							<WorkspacePanel workspace={workspace} />

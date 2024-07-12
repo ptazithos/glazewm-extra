@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use tauri_plugin_log::LogTarget;
 
+mod command;
 mod config;
 mod menu;
 mod windows;
@@ -17,8 +18,8 @@ fn main() {
                 .targets([LogTarget::Stdout])
                 .build(),
         )
-        .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
-            println!("Instance started with: {:?}", argv);
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            command::command_execute(app, argv);
         }))
         .setup(|app| {
             config::setup_store(app);
