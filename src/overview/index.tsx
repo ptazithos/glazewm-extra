@@ -22,12 +22,14 @@ const OverviewApp = () => {
 		const updateWorkspaces = async () => {
 			const window = refWindow.current;
 			const workspaces = await getWorkspaces();
-			info(JSON.stringify(workspaces.length));
 
-			window?.setSize(new LogicalSize(workspaces.length * 280, 180));
-			window?.center();
+			await window?.show();
+			await window?.setSize(new LogicalSize(workspaces.length * 280, 180));
+			await window?.center();
 
-			setWorkspaces(workspaces);
+			setTimeout(() => {
+				setWorkspaces(workspaces);
+			});
 		};
 
 		updateWorkspaces();
