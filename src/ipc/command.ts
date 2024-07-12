@@ -51,6 +51,7 @@ export type SplitSpace = {
 export type Workspace = {
 	tilingDirection: "horizontal" | "vertical";
 	sizePercentage: number;
+	focusIndex: number;
 	type: "workspace";
 	children: Array<SplitSpace | WindowSpace>;
 };
