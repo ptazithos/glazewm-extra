@@ -35,17 +35,28 @@ type WindowsPayload = Payload<Array<Window>>;
 export const getWindows = async () =>
 	(await command<WindowsPayload>("windows")).data ?? [];
 
-type WindowSpace = {
+export type WindowSpace = {
 	handle: number;
+	type: "window";
 	sizePercentage: number;
 };
-type Workspace = {
+
+export type SplitSpace = {
+	sizePercentage: number;
+	type: "split";
+	children: Array<SplitSpace | WindowSpace>;
+	tilingDirection: "horizontal" | "vertical";
+};
+
+export type Workspace = {
 	tilingDirection: "horizontal" | "vertical";
 	sizePercentage: number;
-	children: Array<Workspace | WindowSpace>;
+	focusIndex: number;
+	type: "workspace";
+	children: Array<SplitSpace | WindowSpace>;
 };
 
-type WorkspacesPayload = Payload<Array<Workspace>>;
+export type WorkspacesPayload = Payload<Array<Workspace>>;
 
-export const getWorkspace = async () =>
+export const getWorkspaces = async () =>
 	(await command<WorkspacesPayload>("workspaces")).data ?? [];

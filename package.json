@@ -8,9 +8,9 @@
 		"preview": "rsbuild preview"
 	},
 	"dependencies": {
+		"@tauri-apps/api": "^1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"@tauri-apps/api": "^1",
 		"tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1"
 	},
 	"devDependencies": {
@@ -20,7 +20,9 @@
 		"@tauri-apps/cli": "^1.6.0",
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",
-		"typescript": "^5.4.2"
+		"@unocss/postcss": "^0.61.3",
+		"typescript": "^5.4.2",
+		"unocss": "^0.61.3"
 	},
 	"packageManager": "pnpm@9.3.0"
 }
