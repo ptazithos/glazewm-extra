@@ -9,6 +9,8 @@ import WorkspacePanel from "./components/workspace-panel";
 
 import "./index.css";
 import {
+	subscribeAll,
+	subscribeFocusChanged,
 	subscribeWindowManaged,
 	subscribeWindowUnmanaged,
 } from "../ipc/subscribe";
@@ -25,20 +27,15 @@ const OverviewApp = () => {
 
 			await window?.show();
 			await window?.setSize(new LogicalSize(workspaces.length * 280, 180));
+
 			await window?.center();
 
-			setTimeout(() => {
-				setWorkspaces(workspaces);
-			});
+			setWorkspaces(workspaces);
 		};
 
 		updateWorkspaces();
 
-		subscribeWindowManaged((payload) => {
-			updateWorkspaces();
-		});
-
-		subscribeWindowUnmanaged((payload) => {
+		subscribeAll(() => {
 			updateWorkspaces();
 		});
 	}, []);

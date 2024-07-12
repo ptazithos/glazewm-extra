@@ -14,9 +14,9 @@ const SplitView = (props: { split: Optional<SplitSpace> }) => {
 				if (!child?.sizePercentage) return <></>;
 				switch (child.type) {
 					case "window":
-						return <WindowView window={child} />;
+						return <WindowView window={child} key={JSON.stringify(child)} />;
 					case "split":
-						return <SplitView split={child} />;
+						return <SplitView split={child} key={JSON.stringify(child)} />;
 				}
 			})}
 		</div>

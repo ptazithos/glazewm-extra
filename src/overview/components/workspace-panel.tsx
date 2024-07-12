@@ -15,9 +15,9 @@ const WorkspacePanel = (props: { workspace: Optional<Workspace> }) => {
 				if (!child?.sizePercentage) return <></>;
 				switch (child.type) {
 					case "window":
-						return <WindowView window={child} />;
+						return <WindowView key={JSON.stringify(child)} window={child} />;
 					case "split":
-						return <SplitView split={child} />;
+						return <SplitView key={JSON.stringify(child)} split={child} />;
 				}
 			})}
 		</div>
