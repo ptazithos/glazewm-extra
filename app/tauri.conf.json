@@ -26,26 +26,7 @@
 				"all": true
 			}
 		},
-		"windows": [
-			{
-				"label": "daemon",
-				"width": 0,
-				"height": 0,
-				"url": "daemon.html",
-				"visible": false
-			},
-			{
-				"label": "overview",
-				"url": "overview.html",
-				"visible": false,
-				"decorations": false,
-				"alwaysOnTop": true,
-				"resizable": true,
-				"transparent": true,
-				"height": 0,
-				"width":0
-			}
-		],
+		"windows": [],
 		"systemTray": {
 			"iconPath": "icons/icon.ico",
 			"iconAsTemplate": true

@@ -23,6 +23,25 @@ fn main() {
         }))
         .setup(|app| {
             config::setup_store(app);
+
+            let _daemon_window = tauri::WindowBuilder::new(
+                app,
+                "daemon",
+                tauri::WindowUrl::App("daemon.html".into()),
+            )
+            .visible(false)
+            .build()?;
+
+            let _overview_window = tauri::WindowBuilder::new(
+                app,
+                "overview",
+                tauri::WindowUrl::App("overview.html".into()),
+            )
+            .visible(false)
+            .decorations(false)
+            .transparent(true)
+            .build()?;
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
