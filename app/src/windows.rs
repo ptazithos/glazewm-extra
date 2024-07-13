@@ -64,7 +64,7 @@ pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
 }
 
 #[tauri::command]
-pub fn get_window_name(raw_handle: isize) -> Option<String> {
+pub fn get_window_title(raw_handle: isize) -> Option<String> {
     let handle = HWND(raw_handle as *mut c_void);
     unsafe {
         let length = GetWindowTextLengthW(handle);

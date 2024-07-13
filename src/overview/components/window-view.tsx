@@ -8,7 +8,7 @@ const WindowView = (props: { window: Optional<WindowSpace> }) => {
 
 	useLayoutEffect(() => {
 		(async () => {
-			const text = (await invoke("get_window_name", {
+			const text = (await invoke("get_window_title", {
 				rawHandle: props.window.handle,
 			})) as string;
 			setText(text.split("-").at(-1) ?? "");
