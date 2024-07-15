@@ -50,6 +50,7 @@ fn main() {
             windows::get_window_title,
             windows::get_window_class,
             windows::get_window_process_name,
+            windows::capture_window,
             config::get_app_config
         ])
         .run(tauri::generate_context!())
