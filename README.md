@@ -38,14 +38,13 @@ scoop install https://github.com/ptazithos/glazewm-extra/releases/download/v0.1.
 The config file located at "${UserFolder}/.config/glazewm-extra.toml". The default config is as follows:
 
 ```toml
-[translucent_window]
-enable = true
-alpha = 220
+[[window_rules]]
+command = "set transparent 220"
+match_process_name = "*"
 
-
-[title_bar]
-# True for hiding all titlebars
-enable = true
+[[window_rules]]
+command = "set title false"
+match_process_name = "*"
 ```
 
 ## License
