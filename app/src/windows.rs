@@ -8,7 +8,7 @@ use windows::Win32::{
         DIB_RGB_COLORS, RGBQUAD, SRCCOPY,
     },
     System::{
-        ProcessStatus::{GetProcessImageFileNameA, GetProcessImageFileNameW},
+        ProcessStatus::GetProcessImageFileNameW,
         Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
     },
     UI::WindowsAndMessaging::{
