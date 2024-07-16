@@ -39,12 +39,12 @@ The config file located at "${UserFolder}/.config/glazewm-extra.toml". The defau
 
 ```toml
 [[window_rules]]
-command = "set transparent 220"
-match_process_name = "*"
+command = "set translucent 220"
+match_process_name = ".*"
 
 [[window_rules]]
 command = "set title false"
-match_process_name = "*"
+match_process_name = ".*"
 ```
 
 ## License

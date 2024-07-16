@@ -20,14 +20,14 @@ impl Default for AppConfig {
         AppConfig {
             window_rules: vec![
                 WindowRule {
-                    command: "set transparent 220".to_string(),
-                    match_process_name: Some("*".to_string()),
+                    command: "set translucent 220".to_string(),
+                    match_process_name: Some(".*".to_string()),
                     match_class_name: None,
                     match_title: None,
                 },
                 WindowRule {
                     command: "set title false".to_string(),
-                    match_process_name: Some("*".to_string()),
+                    match_process_name: Some(".*".to_string()),
                     match_class_name: None,
                     match_title: None,
                 },

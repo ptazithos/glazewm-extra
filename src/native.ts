@@ -1,7 +1,15 @@
 import { invoke } from "@tauri-apps/api";
 import type { Optional } from "./utils";
+import { WindowRule } from "./rules";
 
-export const getWindowInfo = async (rawHandle: number) => {
+export type WindowInfo = {
+	hwnd: number;
+	title: string;
+	className: string;
+	processName: string;
+};
+
+export const getWindowInfo = async (rawHandle: number): Promise<WindowInfo> => {
 	const [_title, _className, _processName] = await Promise.all([
 		invoke<string | null>("get_window_title", { rawHandle }),
 		invoke<string | null>("get_window_class", { rawHandle }),
@@ -13,6 +21,7 @@ export const getWindowInfo = async (rawHandle: number) => {
 	const processName = (_processName ?? "").split("\\").at(-1) ?? "";
 
 	return {
+		hwnd: rawHandle,
 		title,
 		className,
 		processName,
@@ -29,23 +38,6 @@ export type RawWindowRule = {
 export type RawAppConfig = Optional<{
 	window_rules: Array<RawWindowRule>;
 }>;
-
-export type WindowRule = {
-	command:
-		| {
-				type: "set";
-				category: "translucent";
-				value: number;
-		  }
-		| {
-				type: "set";
-				category: "title";
-				value: boolean;
-		  };
-	match_process_name?: string;
-	match_class_name?: string;
-	match_title?: string;
-};
 
 export type AppConfig = {
 	windowRules: Array<WindowRule>;
@@ -67,12 +59,22 @@ export const getAppConfig = async (): Promise<AppConfig> => {
 					const value = Number.parseInt(_value);
 					if (Number.isNaN(value)) return null;
 					if (value < 0 || value > 255) return null;
-					return { ...rule, command: { type, category, value } };
+					return new WindowRule(
+						{ type, category, value },
+						rule.match_process_name,
+						rule.match_class_name,
+						rule.match_title,
+					);
 				}
 
 				case "title": {
 					const value = !(_value === "false");
-					return { ...rule, command: { type, category, value } };
+					return new WindowRule(
+						{ type, category, value },
+						rule.match_process_name,
+						rule.match_class_name,
+						rule.match_title,
+					);
 				}
 				default:
 					return null;

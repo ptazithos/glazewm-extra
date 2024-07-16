@@ -1,38 +1,42 @@
 import { invoke } from "@tauri-apps/api";
 import { subscribeFocusChanged } from "../../ipc/subscribe";
 import { useEffect } from "react";
-import type { AppConfig } from "../../ipc/utils";
+import type { AppConfig } from "../../native";
 import { getWindows } from "../../ipc/command";
+import { getWindowInfo } from "../../native";
+import { info } from "tauri-plugin-log-api";
 
 const AlphaService = (props: { config: AppConfig }) => {
-	const alphaConfig = props.config.translucent_window;
+	const rules = props.config.windowRules.filter(
+		(rule) => rule.command.category === "translucent",
+	);
 
 	useEffect(() => {
-		const setWindowsAlpha = async (alpha: number) => {
+		const setWindowsAlpha = async () => {
 			const windows = await getWindows();
 			for (const window of windows) {
 				const hwnd = window?.handle;
-
-				hwnd &&
-					invoke("set_window_alpha", {
-						rawHandle: hwnd,
-						alpha,
-					});
+				if (hwnd) {
+					const windowInfo = await getWindowInfo(hwnd);
+					for (const rule of rules) {
+						rule.apply(windowInfo);
+					}
+				}
 			}
 		};
 
-		if (!alphaConfig?.enable) return;
-
 		const handle = subscribeFocusChanged(async (payload) => {
-			const focused = payload?.data?.focusedContainer?.handle;
-			await setWindowsAlpha(alphaConfig.alpha ?? 240);
-			await invoke("set_window_alpha", { rawHandle: focused, alpha: 255 });
+			const hwnd = payload?.data?.focusedContainer?.handle;
+			if (hwnd) {
+				await setWindowsAlpha();
+				await invoke("set_window_alpha", { rawHandle: hwnd, alpha: 255 });
+			}
 		});
 
 		return () => {
 			handle.close();
 		};
-	}, [alphaConfig]);
+	}, [rules]);
 
 	return <></>;
 };
