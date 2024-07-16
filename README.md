@@ -35,7 +35,7 @@ scoop install https://github.com/ptazithos/glazewm-extra/releases/latest/downloa
 ```
 
 ## Configuration
-The config file located at "${UserFolder}/.config/glazewm-extra.toml". The default config is as follows:
+The config file located at `~/.config/glazewm-extra.toml`. The default config is as follows:
 
 ```toml
 # Rules applied for every windows once the window creates.
