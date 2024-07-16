@@ -12,32 +12,32 @@ pub struct WindowRule {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AppConfig {
-    window_rules: Vec<WindowRule>,
-    focused_window_rules: Vec<WindowRule>,
-    unfocused_window_rules: Vec<WindowRule>,
+    window_rules: Option<Vec<WindowRule>>,
+    focused_window_rules: Option<Vec<WindowRule>>,
+    unfocused_window_rules: Option<Vec<WindowRule>>,
 }
 
 impl Default for AppConfig {
     fn default() -> Self {
         AppConfig {
-            window_rules: vec![WindowRule {
+            window_rules: Some(vec![WindowRule {
                 command: "set title false".to_string(),
                 match_process_name: Some(".*".to_string()),
                 match_class_name: None,
                 match_title: None,
-            }],
-            focused_window_rules: vec![WindowRule {
+            }]),
+            focused_window_rules: Some(vec![WindowRule {
                 command: "set translucent 255".to_string(),
                 match_process_name: Some(".*".to_string()),
                 match_class_name: None,
                 match_title: None,
-            }],
-            unfocused_window_rules: vec![WindowRule {
+            }]),
+            unfocused_window_rules: Some(vec![WindowRule {
                 command: "set translucent 220".to_string(),
                 match_process_name: Some(".*".to_string()),
                 match_class_name: None,
                 match_title: None,
-            }],
+            }]),
         }
     }
 }
@@ -55,6 +55,7 @@ pub fn setup_store(app: &mut App) {
                 app.manage(app_config);
             } else {
                 app.manage(AppConfig::default());
+                println!("use default");
             }
         }
         Err(_) => {
