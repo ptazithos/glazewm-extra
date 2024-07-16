@@ -1,17 +1,21 @@
 use std::ffi::c_void;
 
 use windows::Win32::{
-    Foundation::{COLORREF, HWND, RECT},
+    Foundation::{CloseHandle, COLORREF, HWND, RECT},
     Graphics::Gdi::{
         BitBlt, CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC,
         GetDIBits, ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, CAPTUREBLT,
         DIB_RGB_COLORS, RGBQUAD, SRCCOPY,
     },
+    System::{
+        ProcessStatus::GetProcessImageFileNameW,
+        Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
+    },
     UI::WindowsAndMessaging::{
         GetClassNameW, GetClientRect, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW,
-        GetWindowTextW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
-        GWL_STYLE, HWND_DESKTOP, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION,
-        WS_EX_LAYERED,
+        GetWindowTextW, GetWindowThreadProcessId, SetLayeredWindowAttributes, SetWindowLongPtrW,
+        SetWindowPos, GWL_EXSTYLE, GWL_STYLE, HWND_DESKTOP, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED,
+        SWP_NOMOVE, WS_CAPTION, WS_EX_LAYERED,
     },
 };
 
@@ -60,7 +64,7 @@ pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
 }
 
 #[tauri::command]
-pub fn get_window_name(raw_handle: isize) -> Option<String> {
+pub fn get_window_title(raw_handle: isize) -> Option<String> {
     let handle = HWND(raw_handle as *mut c_void);
     unsafe {
         let length = GetWindowTextLengthW(handle);
@@ -93,6 +97,41 @@ pub fn get_window_class(raw_handle: isize) -> Option<String> {
         } else {
             None
         }
+    }
+}
+
+#[tauri::command]
+pub fn get_window_process_name(raw_handle: isize) -> Option<String> {
+    let handle = HWND(raw_handle as *mut c_void);
+    unsafe {
+        let mut process_id: u32 = 0;
+        GetWindowThreadProcessId(handle, Some(&mut process_id));
+
+        if process_id == 0 {
+            return None;
+        }
+
+        let process_handle = OpenProcess(
+            PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+            false,
+            process_id,
+        );
+
+        if process_handle.is_err() {
+            return None;
+        }
+
+        let mut buffer = vec![0u16; 260];
+
+        let length = GetProcessImageFileNameW(process_handle.clone().unwrap(), &mut buffer);
+
+        if length == 0 {
+            return None;
+        }
+
+        let _ = CloseHandle(process_handle.unwrap());
+
+        return Some(String::from_utf16_lossy(&buffer[..length as usize]));
     }
 }
 

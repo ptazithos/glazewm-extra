@@ -1,5 +1,5 @@
 import type { Workspace } from "../../ipc/command";
-import type { Optional } from "../../ipc/utils";
+import type { Optional } from "../../utils";
 import SplitView from "./split-view";
 import WindowView from "./window-view";
 

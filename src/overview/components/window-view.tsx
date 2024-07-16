@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { WindowSpace } from "../../ipc/command";
-import type { Optional } from "../../ipc/utils";
+import type { Optional } from "../../utils";
 import { invoke } from "@tauri-apps/api";
 
 const WindowView = (props: { window: Optional<WindowSpace> }) => {
@@ -8,7 +8,7 @@ const WindowView = (props: { window: Optional<WindowSpace> }) => {
 
 	useLayoutEffect(() => {
 		(async () => {
-			const text = (await invoke("get_window_name", {
+			const text = (await invoke("get_window_title", {
 				rawHandle: props.window.handle,
 			})) as string;
 			setText(text.split("-").at(-1) ?? "");

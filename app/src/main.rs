@@ -47,8 +47,10 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             windows::set_window_alpha,
             windows::set_window_titlebar,
-            windows::get_window_name,
+            windows::get_window_title,
             windows::get_window_class,
+            windows::get_window_process_name,
+            windows::capture_window,
             config::get_app_config
         ])
         .run(tauri::generate_context!())

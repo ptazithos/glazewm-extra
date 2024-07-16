@@ -1,19 +1,18 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { invoke } from "@tauri-apps/api/tauri";
 
-import TitleService from "./services/titile";
-import AlphaService from "./services/alpha";
+import ManageService from "./services/manage";
+import FocusService from "./services/focus";
 import CleanUpService from "./services/cleanup";
 
-import type { AppConfig } from "../ipc/utils";
+import { type AppConfig, getAppConfig } from "../native";
 
 const DaemonApp = () => {
 	const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
 
 	useEffect(() => {
 		const init = async () => {
-			const appConfig = await invoke<AppConfig>("get_app_config");
+			const appConfig = await getAppConfig();
 			setAppConfig(appConfig);
 		};
 
@@ -22,8 +21,8 @@ const DaemonApp = () => {
 
 	return appConfig ? (
 		<>
-			<TitleService config={appConfig} />
-			<AlphaService config={appConfig} />
+			<ManageService config={appConfig} />
+			<FocusService config={appConfig} />
 			<CleanUpService />
 		</>
 	) : (

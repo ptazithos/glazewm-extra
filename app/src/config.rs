@@ -3,43 +3,42 @@ use std::fs;
 use tauri::{App, Manager};
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct WindowRule {
+    pub command: String,
+    pub match_process_name: Option<String>,
+    pub match_class_name: Option<String>,
+    pub match_title: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct AppConfig {
-    pub translucent_window: Option<TranslucentWindowConfig>,
-    pub title_bar: Option<TitleBarConfig>,
+    window_rules: Vec<WindowRule>,
+    focused_window_rules: Vec<WindowRule>,
+    unfocused_window_rules: Vec<WindowRule>,
 }
 
 impl Default for AppConfig {
     fn default() -> Self {
-        Self {
-            translucent_window: Some(TranslucentWindowConfig::default()),
-            title_bar: Some(TitleBarConfig::default()),
+        AppConfig {
+            window_rules: vec![WindowRule {
+                command: "set title false".to_string(),
+                match_process_name: Some(".*".to_string()),
+                match_class_name: None,
+                match_title: None,
+            }],
+            focused_window_rules: vec![WindowRule {
+                command: "set translucent 255".to_string(),
+                match_process_name: Some(".*".to_string()),
+                match_class_name: None,
+                match_title: None,
+            }],
+            unfocused_window_rules: vec![WindowRule {
+                command: "set translucent 220".to_string(),
+                match_process_name: Some(".*".to_string()),
+                match_class_name: None,
+                match_title: None,
+            }],
         }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct TranslucentWindowConfig {
-    pub enable: Option<bool>,
-    pub alpha: Option<u8>,
-}
-
-impl Default for TranslucentWindowConfig {
-    fn default() -> Self {
-        Self {
-            enable: Some(true),
-            alpha: Some(220),
-        }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct TitleBarConfig {
-    pub enable: Option<bool>,
-}
-
-impl Default for TitleBarConfig {
-    fn default() -> Self {
-        Self { enable: Some(true) }
     }
 }
 
