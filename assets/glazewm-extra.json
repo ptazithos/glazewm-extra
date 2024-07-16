@@ -1,9 +1,9 @@
 {
-  "version": "v0.1.5",
+  "version": "v0.1.6",
   "description": "Additional features for the Glaze Window Manager (glazewm)",
   "extract_dir": "",
   "bin": "glazewm-extra.exe",
-  "url": "https://github.com/ptazithos/glazewm-extra/releases/download/v0.1.5/glazewm-extra.exe",
+  "url": "https://github.com/ptazithos/glazewm-extra/releases/download/v0.1.6/glazewm-extra.exe",
   "homepage": "https://github.com/ptazithos/glazewm-extra",
   "autoupdate": {
     "url": "https://github.com/ptazithos/glazewm-extra/releases/download/$version/glazewm-extra.exe"
