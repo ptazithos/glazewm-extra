@@ -1,4 +1,4 @@
-import type { Optional } from "./utils";
+import type { Optional } from "../utils";
 import { GLAZEWM_IPC_ADDR } from "./utils";
 
 export type Event =

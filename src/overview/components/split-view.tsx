@@ -1,5 +1,5 @@
 import type { SplitSpace } from "../../ipc/command";
-import type { Optional } from "../../ipc/utils";
+import type { Optional } from "../../utils";
 import WindowView from "./window-view";
 
 const SplitView = (props: { split: Optional<SplitSpace> }) => {

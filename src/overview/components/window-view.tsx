@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { WindowSpace } from "../../ipc/command";
-import type { Optional } from "../../ipc/utils";
+import type { Optional } from "../../utils";
 import { invoke } from "@tauri-apps/api";
 
 const WindowView = (props: { window: Optional<WindowSpace> }) => {

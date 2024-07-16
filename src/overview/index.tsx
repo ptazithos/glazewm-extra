@@ -4,7 +4,7 @@ import { LogicalSize, WebviewWindow } from "@tauri-apps/api/window";
 import { info } from "tauri-plugin-log-api";
 
 import { getWorkspaces, type Workspace } from "../ipc/command";
-import type { Optional } from "../ipc/utils";
+import type { Optional } from "../utils";
 import WorkspacePanel from "./components/workspace-panel";
 
 import "./index.css";

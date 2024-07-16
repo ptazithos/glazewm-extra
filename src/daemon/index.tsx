@@ -6,14 +6,14 @@ import TitleService from "./services/titile";
 import AlphaService from "./services/alpha";
 import CleanUpService from "./services/cleanup";
 
-import type { AppConfig } from "../ipc/utils";
+import { type AppConfig, getAppConfig } from "../native";
 
 const DaemonApp = () => {
 	const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
 
 	useEffect(() => {
 		const init = async () => {
-			const appConfig = await invoke<AppConfig>("get_app_config");
+			const appConfig = await getAppConfig();
 			setAppConfig(appConfig);
 		};
 
