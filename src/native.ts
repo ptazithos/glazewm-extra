@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api";
 import type { Optional } from "./utils";
-import { WindowRule } from "./rules";
+import { WindowRule, parseCommand } from "./rules";
 
 export type WindowInfo = {
 	hwnd: number;
@@ -37,52 +37,67 @@ export type RawWindowRule = {
 
 export type RawAppConfig = Optional<{
 	window_rules: Array<RawWindowRule>;
+	focused_window_rules: Array<RawWindowRule>;
+	unfocused_window_rules: Array<RawWindowRule>;
 }>;
 
 export type AppConfig = {
 	windowRules: Array<WindowRule>;
+	focusedWindowsRules: Array<WindowRule>;
+	unfocusedWindowsRules: Array<WindowRule>;
 };
 
 export const getAppConfig = async (): Promise<AppConfig> => {
 	const appConfig = (await invoke<RawAppConfig>("get_app_config")) ?? [];
-	const _rules = appConfig.window_rules ?? [];
+	const _windowRules = appConfig.window_rules ?? [];
+	const _focusedWindowRules = appConfig.focused_window_rules ?? [];
+	const _unfocusedWindowRules = appConfig.unfocused_window_rules ?? [];
 
-	const windowRules = _rules
+	const windowRules = _windowRules
 		.map((rule) => {
-			const _command = rule.command ?? "";
-			const elements = _command.split(" ");
-			if (elements.length !== 3) return null;
-			if (elements[0] !== "set") return null;
-			const [type, category, _value] = elements;
-			switch (category) {
-				case "translucent": {
-					const value = Number.parseInt(_value);
-					if (Number.isNaN(value)) return null;
-					if (value < 0 || value > 255) return null;
-					return new WindowRule(
-						{ type, category, value },
+			const command = rule?.command ? parseCommand(rule.command) : null;
+			return command
+				? new WindowRule(
+						command,
 						rule.match_process_name,
 						rule.match_class_name,
 						rule.match_title,
-					);
-				}
+					)
+				: null;
+		})
+		.filter((rule) => rule !== null) as WindowRule[];
 
-				case "title": {
-					const value = !(_value === "false");
-					return new WindowRule(
-						{ type, category, value },
+	const focusedWindowsRules = _focusedWindowRules
+		.map((rule) => {
+			const command = rule?.command ? parseCommand(rule.command) : null;
+			return command
+				? new WindowRule(
+						command,
 						rule.match_process_name,
 						rule.match_class_name,
 						rule.match_title,
-					);
-				}
-				default:
-					return null;
-			}
+					)
+				: null;
+		})
+		.filter((rule) => rule !== null) as WindowRule[];
+
+	const unfocusedWindowsRules = _unfocusedWindowRules
+		.map((rule) => {
+			const command = rule?.command ? parseCommand(rule.command) : null;
+			return command
+				? new WindowRule(
+						command,
+						rule.match_process_name,
+						rule.match_class_name,
+						rule.match_title,
+					)
+				: null;
 		})
 		.filter((rule) => rule !== null) as WindowRule[];
 
 	return {
 		windowRules,
+		focusedWindowsRules,
+		unfocusedWindowsRules,
 	};
 };

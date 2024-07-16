@@ -13,25 +13,31 @@ pub struct WindowRule {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AppConfig {
     window_rules: Vec<WindowRule>,
+    focused_window_rules: Vec<WindowRule>,
+    unfocused_window_rules: Vec<WindowRule>,
 }
 
 impl Default for AppConfig {
     fn default() -> Self {
         AppConfig {
-            window_rules: vec![
-                WindowRule {
-                    command: "set translucent 220".to_string(),
-                    match_process_name: Some(".*".to_string()),
-                    match_class_name: None,
-                    match_title: None,
-                },
-                WindowRule {
-                    command: "set title false".to_string(),
-                    match_process_name: Some(".*".to_string()),
-                    match_class_name: None,
-                    match_title: None,
-                },
-            ],
+            window_rules: vec![WindowRule {
+                command: "set title false".to_string(),
+                match_process_name: Some(".*".to_string()),
+                match_class_name: None,
+                match_title: None,
+            }],
+            focused_window_rules: vec![WindowRule {
+                command: "set translucent 255".to_string(),
+                match_process_name: Some(".*".to_string()),
+                match_class_name: None,
+                match_title: None,
+            }],
+            unfocused_window_rules: vec![WindowRule {
+                command: "set translucent 220".to_string(),
+                match_process_name: Some(".*".to_string()),
+                match_class_name: None,
+                match_title: None,
+            }],
         }
     }
 }

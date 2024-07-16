@@ -1,13 +1,10 @@
 import { useEffect } from "react";
 import { getWindowInfo, type AppConfig } from "../../native";
-import { invoke } from "@tauri-apps/api";
 import { getWindows } from "../../ipc/command";
 import { subscribeWindowManaged } from "../../ipc/subscribe";
 
-const TitleService = (props: { config: AppConfig }) => {
-	const rules = props.config.windowRules.filter(
-		(rule) => rule.command.category === "title",
-	);
+const ManageService = (props: { config: AppConfig }) => {
+	const rules = props.config.windowRules;
 
 	useEffect(() => {
 		const setWindowsTitleBar = async () => {
@@ -43,4 +40,4 @@ const TitleService = (props: { config: AppConfig }) => {
 	return <></>;
 };
 
-export default TitleService;
+export default ManageService;

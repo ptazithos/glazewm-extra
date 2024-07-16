@@ -9,17 +9,41 @@ export type RuleCommand<M, N> = {
 	value: N;
 };
 
-export type TraslucentCommand = RuleCommand<"translucent", number>;
+export type TranslucentCommand = RuleCommand<"translucent", number>;
 export type TitleCommand = RuleCommand<"title", boolean>;
 
+export const parseCommand = (
+	str: string,
+): TranslucentCommand | TitleCommand | null => {
+	const elements = str.split(" ");
+	if (elements.length !== 3) return null;
+	if (elements[0] !== "set") return null;
+	const [type, category, _value] = elements;
+	switch (category) {
+		case "translucent": {
+			const value = Number.parseInt(_value);
+			if (Number.isNaN(value)) return null;
+			if (value < 0 || value > 255) return null;
+			return { type, category, value };
+		}
+
+		case "title": {
+			const value = !(_value === "false");
+			return { type, category, value };
+		}
+		default:
+			return null;
+	}
+};
+
 export class WindowRule {
-	command: TraslucentCommand | TitleCommand;
+	command: TranslucentCommand | TitleCommand;
 	match_process_name?: string;
 	match_class_name?: string;
 	match_title?: string;
 
 	constructor(
-		command: TraslucentCommand | TitleCommand,
+		command: TranslucentCommand | TitleCommand,
 		match_process_name?: string,
 		match_class_name?: string,
 		match_title?: string,
