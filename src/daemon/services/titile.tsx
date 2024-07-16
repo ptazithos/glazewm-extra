@@ -1,25 +1,46 @@
 import { useEffect } from "react";
-import type { AppConfig } from "../../ipc/utils";
+import { getWindowInfo, type AppConfig } from "../../native";
 import { invoke } from "@tauri-apps/api";
 import { getWindows } from "../../ipc/command";
 import { subscribeWindowManaged } from "../../ipc/subscribe";
 
 const TitleService = (props: { config: AppConfig }) => {
-	const tileBarConfig = props.config.title_bar;
+	const rules = props.config.windowRules;
 
 	useEffect(() => {
-		const setWindowsTitleBar = async (enable: boolean) => {
+		const setWindowsTitleBar = async () => {
+			const titleRules = rules.filter(
+				(rule) => rule.command.category === "title",
+			);
+
 			const windows = await getWindows();
 			for (const window of windows) {
-				const hwnd = window?.handle;
-				hwnd &&
-					invoke("set_window_titlebar", { rawHandle: hwnd, titlebar: enable });
+				if (!window?.handle) continue;
+				const info = await getWindowInfo(window.handle);
+				for (const rule of titleRules) {
+					const isClassNameMatched =
+						rule.match_class_name &&
+						new RegExp(rule.match_class_name).test(info.className);
+					const isProcessNameMatched =
+						rule.match_process_name &&
+						new RegExp(rule.match_process_name).test(info.processName);
+					const isTitleMatched =
+						rule.match_title && new RegExp(rule.match_title).test(info.title);
+
+					const isRuleMatched =
+						isClassNameMatched || isProcessNameMatched || isTitleMatched;
+
+					if (isRuleMatched) {
+						invoke("set_window_titlebar", {
+							rawHandle: window?.handle,
+							titlebar: rule.command.value,
+						});
+					}
+				}
 			}
 		};
 
-		setWindowsTitleBar(!(tileBarConfig?.enable ?? true));
-
-		if (!tileBarConfig?.enable) return;
+		setWindowsTitleBar();
 
 		const handle = subscribeWindowManaged(async (payload) => {
 			setTimeout(() => {
@@ -32,7 +53,7 @@ const TitleService = (props: { config: AppConfig }) => {
 		return () => {
 			handle.close();
 		};
-	}, [tileBarConfig]);
+	}, [rules]);
 
 	return <></>;
 };
