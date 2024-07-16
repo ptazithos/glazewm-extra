@@ -38,18 +38,22 @@ scoop install https://github.com/ptazithos/glazewm-extra/releases/download/v0.1.
 The config file located at "${UserFolder}/.config/glazewm-extra.toml". The default config is as follows:
 
 ```toml
+# Rules applied for every windows once the window creates.
 [[window_rules]]
 command = "set title false"
 match_process_name = ".*"
 
+# Rules applied for the focused window when focus changes.
 [[focused_window_rules]]
 command = "set translucent 255"
 match_process_name = ".*"
 
+# Rule applied for unfocused windows when focus change.
 [[unfocused_window_rules]]
 command = "set translucent 220"
 match_process_name = ".*"
 ```
+Except `match_process_name`, `match_class_name` and `match_title` are also available.
 
 ## License
 
