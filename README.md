@@ -31,7 +31,7 @@ The latest build can be found [here](https://github.com/ptazithos/glazewm-extra/
 #### Scoop
 
 ```cmd
-scoop install https://github.com/ptazithos/glazewm-extra/releases/download/v0.1.4/glazewm-extra.json
+scoop install https://github.com/ptazithos/glazewm-extra/releases/latest/download/glazewm-extra.json
 ```
 
 ## Configuration
