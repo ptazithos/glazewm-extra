@@ -8,6 +8,6 @@
   "autoupdate": {
     "url": "https://github.com/ptazithos/glazewm-extra/releases/download/$version/glazewm-extra.exe"
   },
-  "notes":"BREAKING CHANGES in configuration. See release note for details: https://github.com/ptazithos/glazewm-extra/releases/tag/v0.1.5"
+  "notes":"BREAKING CHANGES in configuration. See release note for details: https://github.com/ptazithos/glazewm-extra/releases/tag/v0.1.5",
   "license": "MIT License"
 }
