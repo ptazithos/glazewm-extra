@@ -7,7 +7,7 @@ const ManageService = (props: { config: AppConfig }) => {
 	const rules = props.config.windowRules;
 
 	useEffect(() => {
-		const setWindowsTitleBar = async () => {
+		const setWindowsStyle = async () => {
 			const windows = await getWindows();
 			for (const window of windows) {
 				if (!window?.handle) continue;
@@ -18,7 +18,7 @@ const ManageService = (props: { config: AppConfig }) => {
 			}
 		};
 
-		setWindowsTitleBar();
+		setWindowsStyle();
 
 		const handle = subscribeWindowManaged(async (payload) => {
 			setTimeout(async () => {

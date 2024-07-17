@@ -8,6 +8,9 @@ Additional features for the Glaze Window Manager (glazewm).
 #### Hide Title Bar
 ![hide_titlebar](assets/hide_titlebar.png)
 
+#### Disable Rounded Corner
+![disable_rounded_corner](assets/rounded_corner.png)
+
 #### Workspaces Preview
 After glazewm-extra starts, run `glazewm-extra.exe workspaces` to trigger the worksapces preview.
 
@@ -41,6 +44,10 @@ The config file located at `~/.config/glazewm-extra.toml`. The default config is
 # Rules applied for every windows once the window creates.
 [[window_rules]]
 command = "set title false"
+match_process_name = ".*"
+
+[[window_rules]]
+command = "set rounded false"
 match_process_name = ".*"
 
 # Rules applied for the focused window when focus changes.

@@ -11,10 +11,11 @@ export type RuleCommand<M, N> = {
 
 export type TranslucentCommand = RuleCommand<"translucent", number>;
 export type TitleCommand = RuleCommand<"title", boolean>;
+export type RoundedCommand = RuleCommand<"rounded", boolean>;
 
 export const parseCommand = (
 	str: string,
-): TranslucentCommand | TitleCommand | null => {
+): TranslucentCommand | TitleCommand | RoundedCommand | null => {
 	const elements = str.split(" ");
 	if (elements.length !== 3) return null;
 	if (elements[0] !== "set") return null;
@@ -31,19 +32,23 @@ export const parseCommand = (
 			const value = !(_value === "false");
 			return { type, category, value };
 		}
+		case "rounded": {
+			const value = !(_value === "false");
+			return { type, category, value };
+		}
 		default:
 			return null;
 	}
 };
 
 export class WindowRule {
-	command: TranslucentCommand | TitleCommand;
+	command: TranslucentCommand | TitleCommand | RoundedCommand;
 	match_process_name?: string;
 	match_class_name?: string;
 	match_title?: string;
 
 	constructor(
-		command: TranslucentCommand | TitleCommand,
+		command: TranslucentCommand | TitleCommand | RoundedCommand,
 		match_process_name?: string,
 		match_class_name?: string,
 		match_title?: string,
@@ -80,6 +85,12 @@ export class WindowRule {
 					invoke("set_window_titlebar", {
 						rawHandle: windowInfo.hwnd,
 						titlebar: this.command.value,
+					});
+					break;
+				case "rounded":
+					invoke("set_window_rounded", {
+						rawHandle: windowInfo.hwnd,
+						rounded: this.command.value,
 					});
 					break;
 				default:

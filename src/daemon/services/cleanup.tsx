@@ -18,6 +18,11 @@ const CleanUpService = () => {
 					rawHandle: window.handle,
 					titlebar: true,
 				});
+
+				await invoke("set_window_rounded", {
+					rawHandle: window.handle,
+					rounded: true,
+				});
 			}
 
 			await exit(1);
