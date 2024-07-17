@@ -72,7 +72,7 @@ pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
 #[tauri::command]
 pub fn set_window_rounded(raw_handle: isize, rounded: bool) {
     let handle = HWND(raw_handle as *mut c_void);
-    println!("no round");
+
     unsafe {
         let preference: DWM_WINDOW_CORNER_PREFERENCE = if rounded {
             DWMWCP_ROUND
