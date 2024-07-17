@@ -2,10 +2,16 @@ use std::ffi::c_void;
 
 use windows::Win32::{
     Foundation::{CloseHandle, COLORREF, HWND, RECT},
-    Graphics::Gdi::{
-        BitBlt, CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC,
-        GetDIBits, ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, CAPTUREBLT,
-        DIB_RGB_COLORS, RGBQUAD, SRCCOPY,
+    Graphics::{
+        Dwm::{
+            DwmSetWindowAttribute, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_DEFAULT,
+            DWMWCP_DONOTROUND, DWMWCP_ROUND, DWM_WINDOW_CORNER_PREFERENCE,
+        },
+        Gdi::{
+            BitBlt, CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC,
+            GetDIBits, ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, CAPTUREBLT,
+            DIB_RGB_COLORS, RGBQUAD, SRCCOPY,
+        },
     },
     System::{
         ProcessStatus::GetProcessImageFileNameW,
@@ -59,6 +65,26 @@ pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
             rect.right - rect.left,
             rect.bottom - rect.top,
             SWP_FRAMECHANGED | SWP_NOMOVE,
+        );
+    }
+}
+
+#[tauri::command]
+pub fn set_window_rounded(raw_handle: isize, rounded: bool) {
+    let handle = HWND(raw_handle as *mut c_void);
+    println!("no round");
+    unsafe {
+        let preference: DWM_WINDOW_CORNER_PREFERENCE = if rounded {
+            DWMWCP_ROUND
+        } else {
+            DWMWCP_DONOTROUND
+        };
+
+        let _ = DwmSetWindowAttribute(
+            handle,
+            DWMWA_WINDOW_CORNER_PREFERENCE,
+            &preference as *const _ as *const _,
+            std::mem::size_of::<DWM_WINDOW_CORNER_PREFERENCE>() as u32,
         );
     }
 }

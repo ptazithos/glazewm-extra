@@ -23,6 +23,7 @@ windows = { version = "0.58.0", features = [
     "Win32_Graphics_Gdi",
     "Win32_System_ProcessStatus",
     "Win32_System_Threading",
+    "Win32_Graphics_Dwm",
 ] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
