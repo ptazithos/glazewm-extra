@@ -1,18 +1,22 @@
 mod ipc;
 
 use ipc::EventRegistry;
+use tokio::select;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    let _ = EventRegistry::new()
+    let res = EventRegistry::new()
         .register(|payload| {
             println!("Payload: {}", payload);
         })
-        .listen()
-        .await;
+        .listen();
 
-    println!("Hello!");
-    loop {}
+    select! {
+        _ = res => {},
+        _ = tokio::signal::ctrl_c() => {
+            println!("Shutting down...");
+        }
+    }
 }

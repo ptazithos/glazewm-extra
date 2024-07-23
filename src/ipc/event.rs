@@ -22,7 +22,7 @@ impl EventRegistry {
         return self;
     }
 
-    pub async fn listen(&mut self) -> Result<()> {
+    pub async fn listen(self) -> Result<()> {
         let mut stream = Stream::new().await?;
         let callbacks_mutex = self.callbacks.clone();
         let res = tokio::spawn(async move {
