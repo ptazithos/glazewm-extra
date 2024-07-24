@@ -13,8 +13,15 @@ pub struct EffectService<T: EventRegistry> {
     pub ipc: T,
 }
 impl<T: EventRegistry> EffectService<T> {
-    pub fn new(mut ipc: T) -> Self {
-        ipc.register(|msg| {
+    pub fn new(ipc: T) -> Self {
+        let mut service = EffectService { ipc };
+        service.setup_ipc_callbacks();
+
+        service
+    }
+
+    pub fn setup_ipc_callbacks(&mut self) {
+        self.ipc.register(|msg| {
             let payload: Value = serde_json::from_str(msg).unwrap();
             if let Some(response_type) = payload["data"]["type"].as_str() {
                 match response_type {
@@ -35,7 +42,6 @@ impl<T: EventRegistry> EffectService<T> {
                 }
             }
         });
-        EffectService { ipc }
     }
 
     pub async fn serve(&self) {
