@@ -7,7 +7,9 @@ use tracing::{error, info};
 use crate::config::AppConfig;
 
 pub trait EventRegistry {
-    fn register(&mut self, callback: fn(payload: &str));
+    fn register<F>(&mut self, closure: F)
+    where
+        F: Fn(&str) + Send + 'static;
     fn listen(&self) -> impl Future<Output = Result<(), anyhow::Error>>;
 }
 
@@ -26,15 +28,17 @@ impl<T: EventRegistry> EffectService<T> {
     }
 
     fn setup_ipc_callbacks(&mut self) {
-        self.ipc.register(|msg| {
+        let config = self.config.clone();
+        self.ipc.register(move |msg| {
             if let Ok(payload) = serde_json::from_str(msg) as Result<Value, _> {
                 if let Some(response_type) = payload["data"]["type"].as_str() {
                     match response_type {
                         "focus_changed" => {
                             if let Some(hwnd) =
-                                &payload["data"]["focusedContainer"]["handle"].as_i64()
+                                payload["data"]["focusedContainer"]["handle"].as_i64()
                             {
-                                info!("Focused window handle: {}", hwnd);
+                                info!("Focused window handle: {:?}", config);
+                                handle_fucous_change(&config, hwnd.try_into().unwrap());
                             }
                         }
                         "window_managed" => {
@@ -66,3 +70,17 @@ impl<T: EventRegistry> EffectService<T> {
         }
     }
 }
+
+fn handle_fucous_change(config: &AppConfig, hwnd: isize) {
+    let focused_rules = match &config.focused_window_rules {
+        Some(value) => value,
+        None => &Vec::new(),
+    };
+
+    let blur_rules = match &config.unfocused_window_rules {
+        Some(value) => value,
+        None => &Vec::new(),
+    };
+}
+
+fn apply_window_effect() {}

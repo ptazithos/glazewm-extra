@@ -4,7 +4,7 @@ use anyhow::Result;
 use std::sync::{Arc, Mutex};
 
 pub struct IPCEventRegistry {
-    callbacks: Arc<Mutex<Vec<fn(payload: &str)>>>,
+    callbacks: Arc<Mutex<Vec<Box<dyn Fn(&str) + Send>>>>,
 }
 
 impl IPCEventRegistry {
@@ -16,9 +16,12 @@ impl IPCEventRegistry {
 }
 
 impl EventRegistry for IPCEventRegistry {
-    fn register(&mut self, callback: fn(payload: &str)) {
+    fn register<F>(&mut self, callback: F)
+    where
+        F: Fn(&str) + 'static + Send,
+    {
         let mut callbacks = self.callbacks.lock().unwrap();
-        callbacks.push(callback);
+        callbacks.push(Box::new(callback));
     }
 
     async fn listen(&self) -> Result<()> {

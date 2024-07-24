@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct WindowRule {
     pub command: String,
     pub match_process_name: Option<String>,
@@ -9,11 +9,11 @@ pub struct WindowRule {
     pub match_title: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AppConfig {
-    window_rules: Option<Vec<WindowRule>>,
-    focused_window_rules: Option<Vec<WindowRule>>,
-    unfocused_window_rules: Option<Vec<WindowRule>>,
+    pub window_rules: Option<Vec<WindowRule>>,
+    pub focused_window_rules: Option<Vec<WindowRule>>,
+    pub unfocused_window_rules: Option<Vec<WindowRule>>,
 }
 
 impl Default for AppConfig {

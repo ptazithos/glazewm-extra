@@ -1,6 +1,7 @@
 mod config;
 mod ipc;
 mod service;
+mod windows;
 
 use ipc::IPCEventRegistry;
 use service::EffectService;
