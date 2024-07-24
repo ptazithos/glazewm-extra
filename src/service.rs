@@ -1,6 +1,8 @@
 use std::future::Future;
 
+use serde_json::Value;
 use tokio::select;
+use tracing::info;
 
 pub trait EventRegistry {
     fn register(&mut self, callback: fn(payload: &str));
@@ -12,8 +14,26 @@ pub struct EffectService<T: EventRegistry> {
 }
 impl<T: EventRegistry> EffectService<T> {
     pub fn new(mut ipc: T) -> Self {
-        ipc.register(|payload| {
-            println!("Payload: {}", payload);
+        ipc.register(|msg| {
+            let payload: Value = serde_json::from_str(msg).unwrap();
+            if let Some(response_type) = payload["data"]["type"].as_str() {
+                match response_type {
+                    "focus_changed" => {
+                        if let Some(hwnd) = &payload["data"]["focusedContainer"]["handle"].as_i64()
+                        {
+                            info!("Focused window handle: {}", hwnd);
+                        }
+                    }
+                    "window_managed" => {
+                        if let Some(hwnd) = &payload["data"]["managedWindow"]["handle"].as_i64() {
+                            info!("Managed window handle: {}", hwnd);
+                        }
+                    }
+                    _ => {
+                        info!("Unknown response {}", msg);
+                    }
+                }
+            }
         });
         EffectService { ipc }
     }
