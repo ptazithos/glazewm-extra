@@ -4,23 +4,28 @@ use serde_json::Value;
 use tokio::select;
 use tracing::info;
 
+use crate::config::AppConfig;
+
 pub trait EventRegistry {
     fn register(&mut self, callback: fn(payload: &str));
     fn listen(&self) -> impl Future<Output = Result<(), anyhow::Error>>;
 }
 
 pub struct EffectService<T: EventRegistry> {
-    pub ipc: T,
+    ipc: T,
+    config: AppConfig,
 }
 impl<T: EventRegistry> EffectService<T> {
-    pub fn new(ipc: T) -> Self {
-        let mut service = EffectService { ipc };
+    pub fn new(config: AppConfig, ipc: T) -> Self {
+        info!("Init EffectService with config: {:?}", config);
+        let mut service = EffectService { config, ipc };
+
         service.setup_ipc_callbacks();
 
         service
     }
 
-    pub fn setup_ipc_callbacks(&mut self) {
+    fn setup_ipc_callbacks(&mut self) {
         self.ipc.register(|msg| {
             let payload: Value = serde_json::from_str(msg).unwrap();
             if let Some(response_type) = payload["data"]["type"].as_str() {
