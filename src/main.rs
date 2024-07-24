@@ -1,22 +1,15 @@
 mod ipc;
+mod service;
 
-use ipc::EventRegistry;
-use tokio::select;
+use ipc::IPCEventRegistry;
+use service::EffectService;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    let res = EventRegistry::new()
-        .register(|payload| {
-            println!("Payload: {}", payload);
-        })
-        .listen();
+    let ipc_registry = IPCEventRegistry::new();
 
-    select! {
-        _ = res => {},
-        _ = tokio::signal::ctrl_c() => {
-            println!("Shutting down...");
-        }
-    }
+    let app_service = EffectService::new(ipc_registry);
+    app_service.serve().await;
 }

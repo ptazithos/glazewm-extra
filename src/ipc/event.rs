@@ -1,28 +1,27 @@
+use super::websocket::Stream;
+use crate::service::EventRegistry;
+use anyhow::Result;
 use std::sync::{Arc, Mutex};
 
-use super::websocket::Stream;
-use anyhow::Result;
-
-pub struct EventRegistry {
+pub struct IPCEventRegistry {
     callbacks: Arc<Mutex<Vec<fn(payload: &str)>>>,
 }
 
-impl EventRegistry {
-    pub fn new() -> EventRegistry {
-        EventRegistry {
+impl IPCEventRegistry {
+    pub fn new() -> IPCEventRegistry {
+        IPCEventRegistry {
             callbacks: Arc::new(Mutex::new(Vec::new())),
         }
     }
+}
 
-    pub fn register(self, callback: fn(payload: &str)) -> Self {
-        {
-            let mut callbacks = self.callbacks.lock().unwrap();
-            callbacks.push(callback);
-        }
-        return self;
+impl EventRegistry for IPCEventRegistry {
+    fn register(&mut self, callback: fn(payload: &str)) {
+        let mut callbacks = self.callbacks.lock().unwrap();
+        callbacks.push(callback);
     }
 
-    pub async fn listen(self) -> Result<()> {
+    async fn listen(&self) -> Result<()> {
         let mut stream = Stream::new().await?;
         let callbacks_mutex = self.callbacks.clone();
         let res = tokio::spawn(async move {
