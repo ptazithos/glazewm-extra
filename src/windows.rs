@@ -1,7 +1,7 @@
 use std::ffi::c_void;
 
 use windows::Win32::{
-    Foundation::{CloseHandle, COLORREF, HWND, RECT},
+    Foundation::{CloseHandle, BOOL, COLORREF, HWND, LPARAM, RECT},
     Graphics::Dwm::{
         DwmSetWindowAttribute, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_DONOTROUND, DWMWCP_ROUND,
         DWM_WINDOW_CORNER_PREFERENCE,
@@ -11,10 +11,10 @@ use windows::Win32::{
         Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
     },
     UI::WindowsAndMessaging::{
-        GetClassNameW, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW, GetWindowTextW,
-        GetWindowThreadProcessId, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos,
-        GWL_EXSTYLE, GWL_STYLE, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION,
-        WS_EX_LAYERED,
+        EnumWindows, GetClassNameW, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW,
+        GetWindowTextW, GetWindowThreadProcessId, IsWindowVisible, SetLayeredWindowAttributes,
+        SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, GWL_STYLE, HWND_TOP, LWA_ALPHA,
+        SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION, WS_EX_LAYERED,
     },
 };
 
@@ -148,31 +148,47 @@ pub fn get_window_process_name(raw_handle: isize) -> Option<String> {
     }
 }
 
-pub struct WindowInfo {
-    title: String,
-    class: String,
-    process_name: String,
+pub fn get_visible_windows() -> Vec<isize> {
+    let mut hwnds: Vec<isize> = Vec::new();
+
+    unsafe {
+        let _ = EnumWindows(
+            Some(get_visible_windows_proc),
+            LPARAM(&mut hwnds as *mut _ as _),
+        );
+    };
+
+    hwnds
+        .iter()
+        .copied()
+        .filter(|hwnd| unsafe { IsWindowVisible(HWND(*hwnd as *mut c_void)) }.as_bool())
+        .collect()
 }
 
-pub fn get_window_info(raw_handle: isize) {
-    let title = match get_window_title(raw_handle) {
-        Some(value) => value,
-        None => String::from(""),
-    };
+extern "system" fn get_visible_windows_proc(handle: HWND, data: LPARAM) -> BOOL {
+    let hwnds = unsafe { (data.0 as *mut Vec<isize>).as_mut() };
+    if let Some(hwnds) = hwnds {
+        hwnds.push(handle.0 as isize);
+    }
+    true.into()
+}
 
-    let class = match get_window_class(raw_handle) {
-        Some(value) => value,
-        None => String::from(""),
-    };
+pub struct WindowInfo {
+    pub title: String,
+    pub class: String,
+    pub process_name: String,
+}
 
-    let process_name = match get_window_process_name(raw_handle) {
-        Some(value) => value,
-        None => String::from(""),
-    };
+pub fn get_window_info(raw_handle: isize) -> WindowInfo {
+    let title = get_window_title(raw_handle).unwrap_or(String::from(".*"));
+
+    let class = get_window_class(raw_handle).unwrap_or(String::from(""));
+
+    let process_name = get_window_process_name(raw_handle).unwrap_or(String::from(""));
 
     WindowInfo {
         title,
         class,
         process_name,
-    };
+    }
 }
