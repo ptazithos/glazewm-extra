@@ -1,3 +1,4 @@
+mod command;
 mod event;
 mod websocket;
 

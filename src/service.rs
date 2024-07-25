@@ -9,7 +9,7 @@ use crate::{config::AppConfig, windows::get_visible_windows};
 pub trait EventRegistry {
     fn register<F>(&mut self, closure: F)
     where
-        F: Fn(&str) + Send + 'static;
+        F: Fn(&str, &Vec<isize>) + Send + 'static;
     fn listen(&self) -> impl Future<Output = Result<(), anyhow::Error>>;
 }
 
@@ -29,23 +29,35 @@ impl<T: EventRegistry> EffectService<T> {
 
     fn setup_ipc_callbacks(&mut self) {
         let config = self.config.clone();
-        self.ipc.register(move |msg| {
+        self.ipc.register(move |msg, hwnds| {
             if let Ok(payload) = serde_json::from_str(msg) as Result<Value, _> {
                 if let Some(response_type) = payload["data"]["type"].as_str() {
                     match response_type {
                         "focus_changed" => {
-                            if let Some(hwnd) =
+                            if let Some(focused_hwnd) =
                                 payload["data"]["focusedContainer"]["handle"].as_i64()
                             {
-                                info!("Focused window handle: {:?}", config);
-                                handle_focus_change(&config, hwnd.try_into().unwrap());
+                                hwnds.iter().for_each(|hwnd| {
+                                    if *hwnd == isize::try_from(focused_hwnd).unwrap() {
+                                        config.focused_window_rules.iter().for_each(|rule| {
+                                            rule.apply(*hwnd);
+                                        });
+                                    } else {
+                                        config.unfocused_window_rules.iter().for_each(|rule| {
+                                            rule.apply(*hwnd);
+                                        });
+                                    }
+                                });
                             }
                         }
                         "window_managed" => {
                             if let Some(hwnd) = payload["data"]["managedWindow"]["handle"].as_i64()
                             {
                                 info!("Managed window handle: {}", hwnd);
-                                handle_window_managed(&config, hwnd.try_into().unwrap());
+                                config
+                                    .window_rules
+                                    .iter()
+                                    .for_each(|rule| rule.apply(isize::try_from(hwnd).unwrap()))
                             }
                         }
                         _ => {
@@ -70,24 +82,4 @@ impl<T: EventRegistry> EffectService<T> {
             }
         }
     }
-}
-
-fn handle_focus_change(config: &AppConfig, focused_hwnd: isize) {
-    let windows = get_visible_windows();
-
-    windows.iter().for_each(|hwnd| {
-        if *hwnd == focused_hwnd {
-            config.focused_window_rules.iter().for_each(|rule| {
-                rule.apply(*hwnd);
-            });
-        } else {
-            config.unfocused_window_rules.iter().for_each(|rule| {
-                rule.apply(*hwnd);
-            });
-        }
-    });
-}
-
-fn handle_window_managed(config: &AppConfig, hwnd: isize) {
-    config.window_rules.iter().for_each(|rule| rule.apply(hwnd))
 }

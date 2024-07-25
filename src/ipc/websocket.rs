@@ -54,6 +54,7 @@ impl Stream {
         self.collector
             .write_frame(Frame::text(Payload::Borrowed(content.as_bytes())))
             .await?;
+
         Ok(())
     }
 
@@ -61,5 +62,10 @@ impl Stream {
         let frame = self.collector.read_frame().await?;
         let payload = String::from_utf8(frame.payload.to_vec()).expect("Invalid UTF-8 data");
         Ok(payload)
+    }
+
+    pub async fn close(&mut self) -> Result<()> {
+        self.collector.write_frame(Frame::close(0, b"")).await?;
+        Ok(())
     }
 }
