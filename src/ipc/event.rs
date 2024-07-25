@@ -2,6 +2,7 @@ use super::{command::get_windows, websocket::Stream};
 use crate::service::EventRegistry;
 use anyhow::Result;
 use std::sync::{Arc, Mutex};
+use tracing::error;
 
 pub struct IPCEventRegistry {
     callbacks: Arc<Mutex<Vec<Box<dyn Fn(&str, &Vec<isize>) + Send>>>>,

@@ -4,7 +4,7 @@ use serde_json::Value;
 use tokio::select;
 use tracing::{error, info};
 
-use crate::{config::AppConfig, windows::get_visible_windows};
+use crate::config::AppConfig;
 
 pub trait EventRegistry {
     fn register<F>(&mut self, closure: F)
@@ -37,6 +37,7 @@ impl<T: EventRegistry> EffectService<T> {
                             if let Some(focused_hwnd) =
                                 payload["data"]["focusedContainer"]["handle"].as_i64()
                             {
+                                info!("Focused window: {}", msg);
                                 hwnds.iter().for_each(|hwnd| {
                                     if *hwnd == isize::try_from(focused_hwnd).unwrap() {
                                         config.focused_window_rules.iter().for_each(|rule| {
@@ -53,7 +54,7 @@ impl<T: EventRegistry> EffectService<T> {
                         "window_managed" => {
                             if let Some(hwnd) = payload["data"]["managedWindow"]["handle"].as_i64()
                             {
-                                info!("Managed window handle: {}", hwnd);
+                                info!("Managed window: {}", msg);
                                 config
                                     .window_rules
                                     .iter()
@@ -63,6 +64,24 @@ impl<T: EventRegistry> EffectService<T> {
                         _ => {
                             info!("Unknown response {}", msg);
                         }
+                    }
+                } else {
+                    if let Some(response_type) = payload["messageType"].as_str() {
+                        match response_type {
+                            "client_response" => {
+                                hwnds.iter().for_each(|hwnd| {
+                                    config
+                                        .window_rules
+                                        .iter()
+                                        .for_each(|rule| rule.apply(*hwnd))
+                                });
+                            }
+                            _ => {
+                                error!("Unknown message type: {}", msg);
+                            }
+                        }
+                    } else {
+                        error!("Parsed message no data type: {}", msg);
                     }
                 }
             } else {

@@ -1,7 +1,7 @@
 use std::ffi::c_void;
 
 use windows::Win32::{
-    Foundation::{CloseHandle, BOOL, COLORREF, HWND, LPARAM, RECT},
+    Foundation::{CloseHandle, COLORREF, HWND, RECT},
     Graphics::Dwm::{
         DwmSetWindowAttribute, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_DONOTROUND, DWMWCP_ROUND,
         DWM_WINDOW_CORNER_PREFERENCE,
@@ -11,10 +11,10 @@ use windows::Win32::{
         Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
     },
     UI::WindowsAndMessaging::{
-        EnumWindows, GetClassNameW, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW,
-        GetWindowTextW, GetWindowThreadProcessId, IsWindowVisible, SetLayeredWindowAttributes,
-        SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, GWL_STYLE, HWND_TOP, LWA_ALPHA,
-        SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION, WS_EX_LAYERED,
+        GetClassNameW, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW, GetWindowTextW,
+        GetWindowThreadProcessId, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos,
+        GWL_EXSTYLE, GWL_STYLE, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION,
+        WS_EX_LAYERED,
     },
 };
 
@@ -148,30 +148,30 @@ pub fn get_window_process_name(raw_handle: isize) -> Option<String> {
     }
 }
 
-pub fn get_visible_windows() -> Vec<isize> {
-    let mut hwnds: Vec<isize> = Vec::new();
+// pub fn get_visible_windows() -> Vec<isize> {
+//     let mut hwnds: Vec<isize> = Vec::new();
 
-    unsafe {
-        let _ = EnumWindows(
-            Some(get_visible_windows_proc),
-            LPARAM(&mut hwnds as *mut _ as _),
-        );
-    };
+//     unsafe {
+//         let _ = EnumWindows(
+//             Some(get_visible_windows_proc),
+//             LPARAM(&mut hwnds as *mut _ as _),
+//         );
+//     };
 
-    hwnds
-        .iter()
-        .copied()
-        .filter(|hwnd| unsafe { IsWindowVisible(HWND(*hwnd as *mut c_void)) }.as_bool())
-        .collect()
-}
+//     hwnds
+//         .iter()
+//         .copied()
+//         .filter(|hwnd| unsafe { IsWindowVisible(HWND(*hwnd as *mut c_void)) }.as_bool())
+//         .collect()
+// }
 
-extern "system" fn get_visible_windows_proc(handle: HWND, data: LPARAM) -> BOOL {
-    let hwnds = unsafe { (data.0 as *mut Vec<isize>).as_mut() };
-    if let Some(hwnds) = hwnds {
-        hwnds.push(handle.0 as isize);
-    }
-    true.into()
-}
+// extern "system" fn get_visible_windows_proc(handle: HWND, data: LPARAM) -> BOOL {
+//     let hwnds = unsafe { (data.0 as *mut Vec<isize>).as_mut() };
+//     if let Some(hwnds) = hwnds {
+//         hwnds.push(handle.0 as isize);
+//     }
+//     true.into()
+// }
 
 pub struct WindowInfo {
     pub title: String,
