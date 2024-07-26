@@ -1,13 +1,13 @@
 {
-  "version": "v0.1.7",
+  "version": "v0.1.8",
   "description": "Additional features for the Glaze Window Manager (glazewm)",
   "extract_dir": "",
   "bin": "glazewm-extra.exe",
-  "url": "https://github.com/ptazithos/glazewm-extra/releases/download/v0.1.7/glazewm-extra.exe",
+  "url": "https://github.com/ptazithos/glazewm-extra/releases/download/v0.1.8/glazewm-extra.exe",
   "homepage": "https://github.com/ptazithos/glazewm-extra",
   "autoupdate": {
     "url": "https://github.com/ptazithos/glazewm-extra/releases/download/$version/glazewm-extra.exe"
   },
-  "notes":"BREAKING CHANGES in configuration. See release note for details: https://github.com/ptazithos/glazewm-extra/releases/tag/v0.1.5",
+  "notes": "BREAKING CHANGES: workspace preview is removed since webview2 doesn't work for everyone.",
   "license": "MIT License"
 }
