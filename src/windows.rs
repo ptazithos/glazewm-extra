@@ -2,30 +2,22 @@ use std::ffi::c_void;
 
 use windows::Win32::{
     Foundation::{CloseHandle, COLORREF, HWND, RECT},
-    Graphics::{
-        Dwm::{
-            DwmSetWindowAttribute, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_DONOTROUND, DWMWCP_ROUND,
-            DWM_WINDOW_CORNER_PREFERENCE,
-        },
-        Gdi::{
-            BitBlt, CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC,
-            GetDIBits, ReleaseDC, SelectObject, BITMAPINFO, BITMAPINFOHEADER, CAPTUREBLT,
-            DIB_RGB_COLORS, RGBQUAD, SRCCOPY,
-        },
+    Graphics::Dwm::{
+        DwmSetWindowAttribute, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_DONOTROUND, DWMWCP_ROUND,
+        DWM_WINDOW_CORNER_PREFERENCE,
     },
     System::{
         ProcessStatus::GetProcessImageFileNameW,
         Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
     },
     UI::WindowsAndMessaging::{
-        GetClassNameW, GetClientRect, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW,
-        GetWindowTextW, GetWindowThreadProcessId, SetLayeredWindowAttributes, SetWindowLongPtrW,
-        SetWindowPos, GWL_EXSTYLE, GWL_STYLE, HWND_DESKTOP, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED,
-        SWP_NOMOVE, WS_CAPTION, WS_EX_LAYERED,
+        GetClassNameW, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW, GetWindowTextW,
+        GetWindowThreadProcessId, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos,
+        GWL_EXSTYLE, GWL_STYLE, HWND_TOP, LWA_ALPHA, SWP_FRAMECHANGED, SWP_NOMOVE, WS_CAPTION,
+        WS_EX_LAYERED,
     },
 };
 
-#[tauri::command]
 pub fn set_window_alpha(raw_handle: isize, alpha: u8) {
     let handle = HWND(raw_handle as *mut c_void);
 
@@ -42,7 +34,6 @@ pub fn set_window_alpha(raw_handle: isize, alpha: u8) {
     }
 }
 
-#[tauri::command]
 pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
     let handle = HWND(raw_handle as *mut c_void);
 
@@ -69,7 +60,6 @@ pub fn set_window_titlebar(raw_handle: isize, titlebar: bool) {
     }
 }
 
-#[tauri::command]
 pub fn set_window_rounded(raw_handle: isize, rounded: bool) {
     let handle = HWND(raw_handle as *mut c_void);
 
@@ -89,7 +79,6 @@ pub fn set_window_rounded(raw_handle: isize, rounded: bool) {
     }
 }
 
-#[tauri::command]
 pub fn get_window_title(raw_handle: isize) -> Option<String> {
     let handle = HWND(raw_handle as *mut c_void);
     unsafe {
@@ -110,7 +99,6 @@ pub fn get_window_title(raw_handle: isize) -> Option<String> {
     }
 }
 
-#[tauri::command]
 pub fn get_window_class(raw_handle: isize) -> Option<String> {
     let handle = HWND(raw_handle as *mut c_void);
     unsafe {
@@ -126,7 +114,6 @@ pub fn get_window_class(raw_handle: isize) -> Option<String> {
     }
 }
 
-#[tauri::command]
 pub fn get_window_process_name(raw_handle: isize) -> Option<String> {
     let handle = HWND(raw_handle as *mut c_void);
     unsafe {
@@ -161,75 +148,47 @@ pub fn get_window_process_name(raw_handle: isize) -> Option<String> {
     }
 }
 
-#[tauri::command]
-pub fn capture_window(raw_handle: isize) {
-    let handle = HWND(raw_handle as *mut c_void);
+// pub fn get_visible_windows() -> Vec<isize> {
+//     let mut hwnds: Vec<isize> = Vec::new();
 
-    unsafe {
-        let hdc = GetDC(HWND_DESKTOP);
-        let hdc_mem = CreateCompatibleDC(hdc);
+//     unsafe {
+//         let _ = EnumWindows(
+//             Some(get_visible_windows_proc),
+//             LPARAM(&mut hwnds as *mut _ as _),
+//         );
+//     };
 
-        let mut rect = RECT::default();
-        GetClientRect(handle, &mut rect).unwrap();
+//     hwnds
+//         .iter()
+//         .copied()
+//         .filter(|hwnd| unsafe { IsWindowVisible(HWND(*hwnd as *mut c_void)) }.as_bool())
+//         .collect()
+// }
 
-        let width = rect.right - rect.left;
-        let height = rect.bottom - rect.top;
+// extern "system" fn get_visible_windows_proc(handle: HWND, data: LPARAM) -> BOOL {
+//     let hwnds = unsafe { (data.0 as *mut Vec<isize>).as_mut() };
+//     if let Some(hwnds) = hwnds {
+//         hwnds.push(handle.0 as isize);
+//     }
+//     true.into()
+// }
 
-        let virtual_screen = CreateCompatibleBitmap(hdc, width, height);
-        SelectObject(hdc_mem, virtual_screen);
+pub struct WindowInfo {
+    pub title: String,
+    pub class: String,
+    pub process_name: String,
+}
 
-        BitBlt(
-            hdc_mem,
-            0,
-            0,
-            width,
-            height,
-            hdc,
-            rect.left,
-            rect.top,
-            CAPTUREBLT | SRCCOPY,
-        )
-        .unwrap();
+pub fn get_window_info(raw_handle: isize) -> WindowInfo {
+    let title = get_window_title(raw_handle).unwrap_or(String::from(".*"));
 
-        let mut bmi = BITMAPINFO {
-            bmiHeader: BITMAPINFOHEADER {
-                biSize: std::mem::size_of::<BITMAPINFOHEADER>() as u32,
-                biWidth: width,
-                biHeight: -height, // top-down DIB
-                biPlanes: 1,
-                biBitCount: 32,
-                biCompression: 0,
-                biSizeImage: (width * height * 4) as u32,
-                biXPelsPerMeter: 0,
-                biYPelsPerMeter: 0,
-                biClrUsed: 0,
-                biClrImportant: 0,
-            },
-            bmiColors: [RGBQUAD {
-                rgbBlue: 0,
-                rgbGreen: 0,
-                rgbRed: 0,
-                rgbReserved: 0,
-            }; 1],
-        };
+    let class = get_window_class(raw_handle).unwrap_or(String::from(""));
 
-        let mut buffer: Vec<u8> = vec![0; (width * height * 4) as usize];
-        GetDIBits(
-            hdc,
-            virtual_screen,
-            0,
-            height as u32,
-            Option::Some(buffer.as_mut_ptr() as *mut c_void),
-            &mut bmi,
-            DIB_RGB_COLORS,
-        );
+    let process_name = get_window_process_name(raw_handle).unwrap_or(String::from(""));
 
-        // let img =
-        //     ImageBuffer::<Rgba<u8>, _>::from_raw(width as u32, height as u32, buffer).unwrap();
-        // img.save(path).unwrap();
-
-        let _ = DeleteObject(virtual_screen);
-        let _ = DeleteDC(hdc_mem);
-        ReleaseDC(handle, hdc);
+    WindowInfo {
+        title,
+        class,
+        process_name,
     }
 }
