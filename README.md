@@ -24,11 +24,17 @@ The latest build can be found [here](https://github.com/ptazithos/glazewm-extra/
 scoop install https://github.com/ptazithos/glazewm-extra/releases/latest/download/glazewm-extra.json
 ```
 
+#### Cargo
+
+```cmd
+cargo install glazewm-extra
+```
+
 ## Configuration
-The config file located at `~/.config/glazewm-extra.toml`. The default config is as follows:
+The config file is at `~/.config/glazewm-extra.toml`. The default config is as follows:
 
 ```toml
-# Rules applied for every windows once the window creates.
+# Rules are applied to every window once it is created.
 [[window_rules]]
 command = "set title false"
 match_process_name = ".*"
@@ -37,12 +43,12 @@ match_process_name = ".*"
 command = "set rounded false"
 match_process_name = ".*"
 
-# Rules applied for the focused window when focus changes.
+# Rules are applied to the focused window when the focus changes.
 [[focused_window_rules]]
 command = "set translucent 255"
 match_process_name = ".*"
 
-# Rule applied for unfocused windows when focus change.
+# Rules are applied to the unfocused windows when the focus changes.
 [[unfocused_window_rules]]
 command = "set translucent 220"
 match_process_name = ".*"
