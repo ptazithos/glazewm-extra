@@ -1,0 +1,41 @@
+name: Github Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Extract version from tag
+      id: extract_version
+      run: |
+        $tag = git describe --tags --abbrev=0
+        $version = $tag -replace 'v', ''
+        echo "TAG=$tag" >> $env:GITHUB_ENV
+        echo "VERSION=$version" >> $env:GITHUB_ENV
+ 
+    - name: Update version in JSON file
+      run: |
+        $json = Get-Content -Path ./assets/glazewm-extra.json -Raw | ConvertFrom-Json
+        $json.version = "$env:TAG"
+        $json.url = "https://github.com/ptazithos/glazewm-extra/releases/download/$env:TAG/glazewm-extra.exe"
+        $json | ConvertTo-Json | Set-Content -Path ./assets/glazewm-extra.json
+
+    - name: Build in release mode
+      run: cargo build --release
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: ${{env.TAG}}
+        files: |
+            ./target/release/glazewm-extra.exe
+            ./assets/glazewm-extra.json
