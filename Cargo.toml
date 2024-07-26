@@ -26,6 +26,7 @@ dirs = "5.0"
 toml = "0.8.14"
 regex = "1.10.5"
 tray-item = "0.10.0"
+single-instance = "0.3"
 
 
 [build-dependencies]

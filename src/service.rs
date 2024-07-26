@@ -117,8 +117,8 @@ impl<M: EventRegistry, N: EventRegistry> EffectService<M, N> {
         let ipc_fut = self.ipc.listen();
 
         select! {
-            _ = tray_fut => {},
-            _ = ipc_fut => {},
+            res = tray_fut => { error!("Tray error: {:?}", res) },
+            res = ipc_fut => {error!("IPC error: {:?}", res)},
             _ = tokio::signal::ctrl_c() => {
                 println!("Shutting down...");
             }
