@@ -1,9 +1,9 @@
-use anyhow::Ok;
+use anyhow::{Ok, Result};
 use serde::*;
 
 use super::websocket::Stream;
 
-pub async fn command(command: &str) -> anyhow::Result<String> {
+pub async fn command(command: &str) -> Result<String> {
     let mut stream = Stream::new().await?;
     stream.write(command).await?;
     let res = stream.read().await?;
@@ -12,7 +12,7 @@ pub async fn command(command: &str) -> anyhow::Result<String> {
     Ok(res)
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Payload {
     #[serde(rename(deserialize = "clientMessage"))]
     client_message: String,
@@ -28,7 +28,7 @@ pub struct Container {
     id: String,
 }
 
-pub async fn get_windows() -> anyhow::Result<Payload> {
+pub async fn get_windows() -> Result<Payload> {
     let res = command("windows").await?;
     let payload: Payload = serde_json::from_str(&res).unwrap();
     Ok(payload)

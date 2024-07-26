@@ -2,7 +2,6 @@ use super::{command::get_windows, websocket::Stream};
 use crate::service::EventRegistry;
 use anyhow::Result;
 use std::sync::{Arc, Mutex};
-use tracing::error;
 
 pub struct IPCEventRegistry {
     callbacks: Arc<Mutex<Vec<Box<dyn Fn(&str, &Vec<isize>) + Send>>>>,
@@ -25,7 +24,7 @@ impl EventRegistry for IPCEventRegistry {
         callbacks.push(Box::new(callback));
     }
 
-    async fn listen(&self) -> Result<()> {
+    async fn listen(&mut self) -> Result<()> {
         let mut stream = Stream::new().await?;
         let callbacks_mutex = self.callbacks.clone();
         let res = tokio::spawn(async move {

@@ -4,26 +4,30 @@ use serde_json::Value;
 use tokio::select;
 use tracing::{error, info};
 
-use crate::config::AppConfig;
+use crate::{
+    config::AppConfig,
+    windows::{set_window_alpha, set_window_rounded, set_window_titlebar},
+};
 
 pub trait EventRegistry {
     fn register<F>(&mut self, closure: F)
     where
         F: Fn(&str, &Vec<isize>) + Send + 'static;
-    fn listen(&self) -> impl Future<Output = Result<(), anyhow::Error>>;
+    fn listen(&mut self) -> impl Future<Output = Result<(), anyhow::Error>>;
 }
 
-pub struct EffectService<T: EventRegistry> {
-    ipc: T,
+pub struct EffectService<M: EventRegistry, N: EventRegistry> {
+    ipc: M,
+    tray: N,
     config: AppConfig,
 }
-impl<T: EventRegistry> EffectService<T> {
-    pub fn new(config: AppConfig, ipc: T) -> Self {
+impl<M: EventRegistry, N: EventRegistry> EffectService<M, N> {
+    pub fn new(config: AppConfig, ipc: M, tray: N) -> Self {
         info!("Init EffectService with config: {:?}", config);
-        let mut service = EffectService { config, ipc };
+        let mut service = EffectService { config, ipc, tray };
 
         service.setup_ipc_callbacks();
-
+        service.setup_tray_callbacks();
         service
     }
 
@@ -90,11 +94,30 @@ impl<T: EventRegistry> EffectService<T> {
         });
     }
 
-    pub async fn serve(&self) {
-        let ipc_registry = &self.ipc;
-        let ipc_fut = ipc_registry.listen();
+    fn setup_tray_callbacks(&mut self) {
+        self.tray.register(|msg, hwnds| match msg {
+            "quit" => {
+                hwnds.iter().for_each(|hwnd| {
+                    set_window_alpha(*hwnd, 255);
+                    set_window_rounded(*hwnd, true);
+                    set_window_titlebar(*hwnd, true);
+                });
+
+                std::process::exit(0);
+            }
+            _ => {
+                info!("Unknown tray event: {}", msg);
+            }
+        })
+    }
+
+    pub async fn serve(&mut self) {
+        let tray_fut = self.tray.listen();
+
+        let ipc_fut = self.ipc.listen();
 
         select! {
+            _ = tray_fut => {},
             _ = ipc_fut => {},
             _ = tokio::signal::ctrl_c() => {
                 println!("Shutting down...");
