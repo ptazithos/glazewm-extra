@@ -1,5 +1,5 @@
 {
-  "version": "v0.1.8",
+  "version": "v0.1.9",
   "description": "Additional features for the Glaze Window Manager (glazewm)",
   "extract_dir": "",
   "bin": "glazewm-extra.exe",
