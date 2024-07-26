@@ -8,7 +8,12 @@ use windows::Win32::{
     },
     System::{
         ProcessStatus::GetProcessImageFileNameW,
-        Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
+        Threading::{
+            GetCurrentProcess, OpenProcess, ProcessPowerThrottling, SetPriorityClass,
+            SetProcessInformation, IDLE_PRIORITY_CLASS, PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+            PROCESS_POWER_THROTTLING_EXECUTION_SPEED, PROCESS_POWER_THROTTLING_STATE,
+            PROCESS_QUERY_INFORMATION, PROCESS_VM_READ,
+        },
     },
     UI::WindowsAndMessaging::{
         GetClassNameW, GetWindowLongPtrW, GetWindowRect, GetWindowTextLengthW, GetWindowTextW,
@@ -190,5 +195,28 @@ pub fn get_window_info(raw_handle: isize) -> WindowInfo {
         title,
         class,
         process_name,
+    }
+}
+
+pub fn set_process_priority() {
+    unsafe {
+        let _ = SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
+    }
+}
+
+pub fn enable_ecoqos() {
+    let mut power_throttling = PROCESS_POWER_THROTTLING_STATE {
+        Version: PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+        ControlMask: PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
+        StateMask: PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
+    };
+
+    unsafe {
+        let _ = SetProcessInformation(
+            GetCurrentProcess(),
+            ProcessPowerThrottling,
+            &mut power_throttling as *mut _ as *mut _,
+            std::mem::size_of::<PROCESS_POWER_THROTTLING_STATE>() as u32,
+        );
     }
 }
