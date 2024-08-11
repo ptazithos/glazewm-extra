@@ -1,6 +1,6 @@
 # GlazeWM Extra
 
-Additional features for the Glaze Window Manager (glazewm). 
+Additional features for the **GlazeWM v2**. 
 
 #### Translucent windows
 ![transparency](assets/transparency.gif)
