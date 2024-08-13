@@ -42,7 +42,12 @@ impl EventRegistry for TrayEventRegistry {
             loop {
                 rx.recv().await.unwrap();
                 let windows = get_windows().await?;
-                let hwnds = windows.data.iter().map(|c| c.handle).collect::<Vec<_>>();
+                let hwnds = windows
+                    .data
+                    .windows
+                    .iter()
+                    .map(|c| c.handle)
+                    .collect::<Vec<_>>();
 
                 let callbacks = callbacks_mutex.lock().unwrap();
                 for callback in callbacks.iter() {

@@ -1,7 +1,7 @@
 use std::future::Future;
 
 use serde_json::Value;
-use tokio::select;
+use tokio::{select, time::Instant};
 use tracing::{error, info};
 
 use crate::{
@@ -35,7 +35,7 @@ impl<M: EventRegistry, N: EventRegistry> EffectService<M, N> {
         let config = self.config.clone();
         self.ipc.register(move |msg, hwnds| {
             if let Ok(payload) = serde_json::from_str(msg) as Result<Value, _> {
-                if let Some(response_type) = payload["data"]["type"].as_str() {
+                if let Some(response_type) = payload["data"]["eventType"].as_str() {
                     match response_type {
                         "focus_changed" => {
                             if let Some(focused_hwnd) =
@@ -112,16 +112,23 @@ impl<M: EventRegistry, N: EventRegistry> EffectService<M, N> {
     }
 
     pub async fn serve(&mut self) {
-        let tray_fut = self.tray.listen();
+        let serve_start = Instant::now();
+        println!("Starting EffectService::serve()");
 
+        let tray_fut = self.tray.listen();
         let ipc_fut = self.ipc.listen();
 
         select! {
             res = tray_fut => { error!("Tray error: {:?}", res) },
-            res = ipc_fut => {error!("IPC error: {:?}", res)},
+            res = ipc_fut => { error!("IPC error: {:?}", res) },
             _ = tokio::signal::ctrl_c() => {
                 println!("Shutting down...");
             }
         }
+
+        println!(
+            "EffectService::serve() completed after: {:?}",
+            serve_start.elapsed()
+        );
     }
 }
