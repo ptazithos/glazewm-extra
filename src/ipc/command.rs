@@ -1,41 +1,14 @@
 use super::websocket::Stream;
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use serde::*;
-use std::sync::Arc;
-use tokio::sync::Mutex;
 
-pub struct CommandExecutor {
-    stream: Arc<Mutex<Option<Stream>>>,
-}
+pub async fn command(command: &str) -> Result<String> {
+    let mut stream = Stream::new().await?;
+    stream.write(command).await?;
+    let res = stream.read().await?;
+    stream.close().await?;
 
-impl CommandExecutor {
-    pub fn new() -> Self {
-        CommandExecutor {
-            stream: Arc::new(Mutex::new(None)),
-        }
-    }
-
-    pub async fn execute(&self, command: &str) -> Result<String> {
-        let mut stream_guard = self.stream.lock().await;
-        if stream_guard.is_none() {
-            *stream_guard = Some(Stream::new().await?);
-        }
-
-        let stream = stream_guard.as_mut().unwrap();
-
-        stream.write(command).await?;
-
-        let res = match tokio::time::timeout(std::time::Duration::from_secs(5), stream.read()).await
-        {
-            Ok(result) => match result {
-                Ok(response) => Ok(response),
-                Err(e) => Err(anyhow!("Stream read error: {}", e)),
-            },
-            Err(_) => Err(anyhow!("Timeout reading from stream")),
-        }?;
-
-        Ok(res)
-    }
+    Ok(res)
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
@@ -62,13 +35,7 @@ pub struct Window {
 }
 
 pub async fn get_windows() -> Result<Payload> {
-    static EXECUTOR: tokio::sync::OnceCell<CommandExecutor> = tokio::sync::OnceCell::const_new();
-    let executor = EXECUTOR
-        .get_or_init(|| async { CommandExecutor::new() })
-        .await;
-
-    let response = executor.execute("query windows").await?;
-    let parsed: Payload = serde_json::from_str(&response)?;
-
-    Ok(parsed)
+    let res = command("query windows").await?;
+    let payload: Payload = serde_json::from_str(&res).unwrap();
+    Ok(payload)
 }
