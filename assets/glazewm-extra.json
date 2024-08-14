@@ -8,6 +8,6 @@
   "autoupdate": {
     "url": "https://github.com/ptazithos/glazewm-extra/releases/download/$version/glazewm-extra.exe"
   },
-  "notes": "BREAKING CHANGES: workspace preview is removed since webview2 doesn't work for everyone.",
+  "notes": "BREAKING CHANGES: 0.2.0 only supports GlazeWM 3.x. For 2.x user, please use glazewm-extra v0.1.10",
   "license": "MIT License"
 }
