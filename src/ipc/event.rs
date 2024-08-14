@@ -33,8 +33,8 @@ impl EventRegistry for IPCEventRegistry {
             loop {
                 let res = stream.read().await?;
 
-                let windows = get_windows().await?;
-                let hwnds = windows
+                let payload = get_windows().await?;
+                let hwnds = payload
                     .data
                     .windows
                     .iter()

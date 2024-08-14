@@ -41,8 +41,8 @@ impl EventRegistry for TrayEventRegistry {
         let res = spawn(async move {
             loop {
                 rx.recv().await.unwrap();
-                let windows = get_windows().await?;
-                let hwnds = windows
+                let payload = get_windows().await?;
+                let hwnds = payload
                     .data
                     .windows
                     .iter()

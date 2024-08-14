@@ -113,7 +113,7 @@ impl<M: EventRegistry, N: EventRegistry> EffectService<M, N> {
 
     pub async fn serve(&mut self) {
         let serve_start = Instant::now();
-        println!("Starting EffectService::serve()");
+        info!("Starting EffectService::serve()");
 
         let tray_fut = self.tray.listen();
         let ipc_fut = self.ipc.listen();
@@ -126,7 +126,7 @@ impl<M: EventRegistry, N: EventRegistry> EffectService<M, N> {
             }
         }
 
-        println!(
+        info!(
             "EffectService::serve() completed after: {:?}",
             serve_start.elapsed()
         );
