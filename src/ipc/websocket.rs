@@ -29,11 +29,11 @@ pub struct Stream {
 
 impl Stream {
     pub async fn new() -> Result<Self> {
-        let stream = TcpStream::connect("localhost:6123").await?;
+        let stream = TcpStream::connect("127.0.0.1:6123").await?;
         let req = Request::builder()
             .method("GET")
-            .uri("http://localhost:6123/")
-            .header("Host", "localhost:6123")
+            .uri("http://127.0.0.1:6123/")
+            .header("Host", "127.0.0.1:6123")
             .header(UPGRADE, "websocket")
             .header(CONNECTION, "upgrade")
             .header(

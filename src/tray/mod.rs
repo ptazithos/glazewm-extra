@@ -41,8 +41,13 @@ impl EventRegistry for TrayEventRegistry {
         let res = spawn(async move {
             loop {
                 rx.recv().await.unwrap();
-                let windows = get_windows().await?;
-                let hwnds = windows.data.iter().map(|c| c.handle).collect::<Vec<_>>();
+                let payload = get_windows().await?;
+                let hwnds = payload
+                    .data
+                    .windows
+                    .iter()
+                    .map(|c| c.handle)
+                    .collect::<Vec<_>>();
 
                 let callbacks = callbacks_mutex.lock().unwrap();
                 for callback in callbacks.iter() {

@@ -28,13 +28,18 @@ impl EventRegistry for IPCEventRegistry {
         let mut stream = Stream::new().await?;
         let callbacks_mutex = self.callbacks.clone();
         let res = tokio::spawn(async move {
-            stream.write("subscribe -e all").await?;
+            stream.write("sub -e all").await?;
 
             loop {
                 let res = stream.read().await?;
 
-                let windows = get_windows().await?;
-                let hwnds = windows.data.iter().map(|c| c.handle).collect::<Vec<_>>();
+                let payload = get_windows().await?;
+                let hwnds = payload
+                    .data
+                    .windows
+                    .iter()
+                    .map(|c| c.handle)
+                    .collect::<Vec<_>>();
 
                 let callbacks = callbacks_mutex.lock().unwrap();
                 for callback in callbacks.iter() {
